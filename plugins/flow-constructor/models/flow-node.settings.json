@@ -1,0 +1,13 @@
+{
+  "kind": "collectionType",
+  "collectionName": "flow_nodes",
+  "info": {
+    "name": "flow-node"
+  },
+  "options": {
+    "timestamps": true,
+    "increments": true,
+    "comment": ""
+  },
+  "attributes": {}
+}
