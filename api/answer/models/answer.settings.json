@@ -1,0 +1,23 @@
+{
+  "kind": "collectionType",
+  "collectionName": "answers",
+  "info": {
+    "name": "answer"
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true
+  },
+  "attributes": {
+    "answer": {
+      "type": "string"
+    },
+    "navigation": {
+      "model": "navigationitem",
+      "plugin": "navigation",
+      "via": "related",
+      "configurable": false,
+      "hidden": true
+    }
+  }
+}
