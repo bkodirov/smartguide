@@ -1,14 +1,24 @@
 import React, {Component} from "react";
-import PropTypes from "prop-types";
+import styled, {keyframes} from 'styled-components';
+import CardView from "./CardView";
+import {Plus} from '@buffetjs/icons';
 
-class Card extends Component {
-  state = {
-    file: null,
-    type: null,
-    options: {
-      filename: null
-    }
-  };
+function AddCard() {
+  return (
+    <CardView>
+      <Plus/>
+    </CardView>
+  );
 }
 
-export default Card;
+function DataCard(props) {
+  return (
+    <CardView >
+      <h3>{props.category}</h3>
+      <h2>{props.title}</h2>
+      <p>{props.excerpt}</p>
+    </CardView>
+  );
+}
+
+export {AddCard, DataCard};

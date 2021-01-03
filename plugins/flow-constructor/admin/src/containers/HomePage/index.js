@@ -1,20 +1,26 @@
-/*
- *
- * HomePage
- *
- */
+import React, {memo, Component} from "react";
+import {request} from "strapi-helper-plugin";
+import PropTypes from "prop-types";
+import {AddCard, DataCard} from "../../components/Card";
+import Background from "../../components/Card/Background";
+import Container from "../../components/Card/CardContainer";
 
-import React, { memo } from 'react';
-// import PropTypes from 'prop-types';
-import pluginId from '../../pluginId';
+class HomePage extends Component {
+  state = {
+    analyzing: false,
+    analysis: null
+  };
 
-const HomePage = () => {
-  return (
-    <div>
-      <h1>{pluginId}&apos;s HomePage</h1>
-      <p>Happy coding</p>
-    </div>
-  );
-};
+  render() {
+    return (
+      <Background>
+        <Container>
+          <DataCard category='Leasing' title='MY TITLE' excerpt='Long long long long desc'/>
+          <AddCard/>
+        </Container>
+      </Background>
+    );
+  };
+}
 
 export default memo(HomePage);
