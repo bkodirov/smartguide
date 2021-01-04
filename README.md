@@ -6,11 +6,23 @@ A quick description of your strapi application
 card: {
     id: 1,
     title: "",
+    type: '',
     tags: [""],
     cards: [ card_id_1, card_id_2 ],
-    nodes: [node_id_1, node_id_2 ]
+    use_cases: [cae_id_1, case_id_2 ]
 }
 ```
+
+
+##Use Case
+```
+case: {
+    id: 1,
+    title: "",
+    head_node_id: node_id 
+}
+```
+
 
 ##Node
 ```
