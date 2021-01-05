@@ -1,5 +1,5 @@
 'use strict';
-const {create, find} = require('../../card/services/repo');
+const {create, find, count, update, remove, findAll} = require('../../card/services/repo');
 
 /**
  * Read the documentation (https://strapi.io/documentation/v3.x/concepts/services.html#core-services)
@@ -7,22 +7,22 @@ const {create, find} = require('../../card/services/repo');
  */
 
 module.exports = {
-  async find(id) {
-
+  async find() {
+    return findAll();
   },
-  async count(ctx) {
-
+  async count() {
+    return count();
   },
-  async findOne(ctx) {
-
+  async findOne(id) {
+    return find(id);
   },
   async create(node) {
-    await create(ctx);
+    return create(node);
   },
-  async update(ctx) {
-
+  async update(card) {
+    return update(card)
   },
-  async delete(ctx) {
-
+  async delete(cardId) {
+    return remove(cardId);
   },
 };
