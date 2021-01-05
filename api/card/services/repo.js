@@ -1,35 +1,36 @@
 async function create(card) {
   if (!card) throw new Error('Card is required');
-  const rawResults = await strapi.connections.mongo.connection.db.collection('cards').insertOne(card);
-  return rawResults.rows;
+  return await strapi.connections.mongo.connection.db.collection('cards').insertOne(card);
 }
 
 async function find(cardId) {
   if (!cardId) throw new Error('Card ID is required');
-  const cursor = await strapi.connections.mongo.connection.db.collection('cards').findOne({id: cardId});
-  return cursor.rows;
+  return strapi.connections.mongo.connection.db.collection('cards').findOne({id: cardId});
 }
 
 async function findAll() {
   const cursor = await strapi.connections.mongo.connection.db.collection('cards').find();
-  return cursor.rows;
+  const resultArray = [];
+  for await (const doc of cursor) {
+    resultArray.push(doc);
+  }
+  return resultArray;
 }
 
 async function count() {
-  const cursor = await strapi.connections.mongo.connection.db.collection('cards').count();
-  return cursor.rows;
+  return await strapi.connections.mongo.connection.db.collection('cards').countDocuments();
 }
 
-async function update(card) {
+async function update(cardId, card) {
   if (!card) throw new Error('Card is required');
   const cursor = await strapi.connections.mongo.connection.db.collection('cards').replaceOne({id: card.id}, card);
-  return cursor.rows;
+  return cursor.result.ok === 1;
 }
 
 async function remove(cardId) {
   if (!cardId) throw new Error('Card is required');
   const cursor = await strapi.connections.mongo.connection.db.collection('cards').deleteOne({id: cardId});
-  return cursor.rows;
+  return cursor.result.ok === 1;
 }
 
 module.exports = {create, find, count, findAll, remove, update};

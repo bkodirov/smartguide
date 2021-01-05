@@ -8,7 +8,13 @@ const {create, find, count, update, remove, findAll} = require('../../card/servi
 
 module.exports = {
   async find() {
-    return findAll();
+    try {
+      return findAll();
+  } catch (e) {
+    strapi.log.error(`Finding card errored out => ${e}`);
+    return Error(e);
+  }
+
   },
   async count() {
     return count();
@@ -19,8 +25,8 @@ module.exports = {
   async create(node) {
     return create(node);
   },
-  async update(card) {
-    return update(card)
+  async update(cardId, card) {
+    return update(cardId, card)
   },
   async delete(cardId) {
     return remove(cardId);
