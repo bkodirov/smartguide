@@ -1,5 +1,4 @@
 'use strict';
-const {parseMultipartData, sanitizeEntity} = require('strapi-utils');
 /**
  * Read the documentation (https://strapi.io/documentation/v3.x/concepts/controllers.html#core-controllers)
  * to customize this controller
@@ -34,7 +33,7 @@ module.exports = {
     const {id} = ctx.params;
     const updated = await strapi.services.card.update(id, ctx.request.body);
     if (updated) {
-      ctx.send({message: `Record with id:${id} updated`})();
+      ctx.send({message: `Record with id:${id} updated`});
     } else {
       ctx.send({message: `Data with id:${id} not found`}, 404)
     }
