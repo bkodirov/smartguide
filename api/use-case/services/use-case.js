@@ -10,7 +10,7 @@ module.exports = {
     try {
       return findAll();
     } catch (e) {
-      strapi.log.error(`Finding card errored out => ${e}`);
+      strapi.log.error(`Finding Use case errored out => ${e}`);
       return Error(e);
     }
 
