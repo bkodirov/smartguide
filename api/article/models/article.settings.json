@@ -1,0 +1,25 @@
+{
+  "kind": "collectionType",
+  "collectionName": "articles",
+  "info": {
+    "name": "Article"
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true
+  },
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "deeplink": {
+      "type": "string",
+      "private": false,
+      "required": true,
+      "unique": true
+    },
+    "full_text": {
+      "type": "richtext"
+    }
+  }
+}
