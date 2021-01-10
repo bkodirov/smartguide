@@ -1,9 +1,15 @@
 'use strict';
+const validator = require('./validator');
 /**
  * Read the documentation (https://strapi.io/documentation/v3.x/concepts/controllers.html#core-controllers)
  * to customize this controller
  */
 
+/**
+ *
+ * @param ctx
+ * @returns true if we shouldn't handle the request furthermore.
+ */
 module.exports = {
 
   async find(ctx) {
@@ -25,12 +31,21 @@ module.exports = {
   },
 
   async create(ctx) {
+    const { error } = validator.validateBody(ctx.request.body);
+    if (error) {
+      return ctx.send({error}, 400);
+    }
     await strapi.services.section.create(ctx.request.body);
     return ctx.response.created();
   },
 
   async update(ctx) {
     const {id} = ctx.params;
+    const bodyValidation  = validator.validateBody(ctx.request.body);
+    const idValidation = validator.validateId(id);
+    if (bodyValidation.error) return ctx.send({error: bodyValidation.error}, 400);
+    if (idValidation.error) return ctx.send({error: idValidation.error}, 400);
+
     const updated = await strapi.services.section.update(id, ctx.request.body);
     if (updated) {
       ctx.send({message: `Record with id:${id} updated`});
@@ -41,6 +56,9 @@ module.exports = {
 
   async delete(ctx) {
     const {id} = ctx.params;
+    const idValidation = validator.validateId(id);
+    if (idValidation.error) return ctx.send({error: idValidation.error}, 400);
+
     const deleteEntity = await strapi.services.section.delete(id);
     if (deleteEntity) {
       ctx.deleted();
