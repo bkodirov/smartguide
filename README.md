@@ -4,44 +4,43 @@ A quick description of your strapi application
 
 ##Section
 ```
-card: {
-    id: 1,
-    title: "",
-    tags: [""],
-    cards: [ card_id_1, card_id_2 ],
+section: {
+    id: "any",
+    title: "123",
+    type: "somethins",
+    tags: [],
+    cards: [ #card ],
 }
 ```
 
 ##Card
 ```
 card: {
-    id: 1,
-    parent_card_id: "",
-    title: "",
-    type: '',
-    tags: [""],
-    cards: [ card_id_1, card_id_2 ],
-    use_cases: [cae_id_1, case_id_2 ]
+    id: "1",
+    title: "123",
+    type: "1234",
+    tags: [],
+    cards: [ #card ],
+    use_cases: [ #use_case ]
 }
 ```
 
 
 ##Use Case
 ```
-case: {
-    id: 1,
-    title: "",
-    head_node_id: node_id,
-    parent_card_id: "",
+use_case: {
+    id: "1",
+    title: "1234",
+    head_node: #node,
 }
 ```
 
 
 ##Node
 ```
-{
+node = {
     "id": "1",
-    "parent_node_id": "507f191e810c19729de860ea",
+    "parent_node_id": #node |'root' ,
     "question": {
         "explanation": "",
         "question_text": "123",
@@ -49,7 +48,7 @@ case: {
         "answers": [
             {
                 "text": "123",
-                "node_id": "507f191e810c19729de860ea"
+                "node": #node"
             }
         ]
     },

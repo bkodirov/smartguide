@@ -18,7 +18,6 @@ const schema = Joi.object({
     }).required()),
     tags: Joi.array().items(Joi.string().min(2).max(12)),
   }),
-  parent_node: [Joi.link('#node'), Joi.string().valid('root')],
   id: Joi.string(),
 })
   .required().xor('conclusion', 'question')
