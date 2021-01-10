@@ -1,8 +1,11 @@
-# Strapi application
+# Smartguide app
 
-A quick description of your strapi application
+##ApiDoc
+### Import Postman queries: [![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/3a2c1a5467e8616c957f)
+### [Web based API doc](https://documenter.getpostman.com/view/11580523/TVzPoKiq)
 
-##Section
+##Samples
+###Section
 ```
 section: {
     id: "any",
@@ -13,7 +16,7 @@ section: {
 }
 ```
 
-##Card
+###Card
 ```
 card: {
     id: "1",
@@ -26,7 +29,7 @@ card: {
 ```
 
 
-##Use Case
+###Use Case
 ```
 use_case: {
     id: "1",
@@ -36,7 +39,7 @@ use_case: {
 ```
 
 
-##Node
+###Node
 ```
 node = {
     "id": "1",
