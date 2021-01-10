@@ -1,64 +1,78 @@
-import React, {Component} from "react";
-import styled, {keyframes} from 'styled-components';
-import CardColumn from '../CardColumn';
+import styled from "styled-components";
 
-const Article = styled.article`
- background: #FFF;
-  margin: 0 0 20px;
-  padding: 20px;
-  border-radius: 2px;
-  box-shadow: 0 2px 4px rgba(#000, 0.2);
-  cursor: pointer;
-  transition: 0.3s ease;
-  
-  &:hover {
-    box-shadow: 0 2px 4px rgba(#000, 0.2),
-      0 4px 8px rgba(#000, 0.2);
-  }
-  
-  &:active {
-    box-shadow: none;
-    transform-origin: center;
-    transform: scale(0.98);
-  }
-  
-  &__category {
-    display: inline-block;
-    // background: #212121;
-    padding: 8px 10px;
-    margin: 0 0 10px;
-    color: #FFF;
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.075rem;
-    text-transform: uppercase;
+const CardView = styled.div`
+  position: relative;
+  min-height: 216px;
+  margin-bottom: 3.6rem;
+  padding: 1.2rem 1.5rem;
+  padding-bottom: 0;
+  background-color: #fff;
+  box-shadow: 0 2px 4px #e3e9f3;
+  -webkit-font-smoothing: antialiased;
+
+  .icon_wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-height: 202px;
+    font-size: 56px;
+    cursor: pointer;
+    svg {
+      fill: #787e8f !important;
+    }
   }
 
-  &__date {}
-
-  &__excerpt {
-    color: #666;
-    line-height: 1.5rem;
-    font-size: 0.875rem;
+  .card_title {
+    display: flex;
+    align-items: center;
+    height: 36px;
+    border-bottom: 1px solid #f3f3f7;
+    h3 {
+      font-size: 13px;
+      line-height: 36px;
+      font-weight: 600;
+      text-transform: uppercase;
+      -webkit-letter-spacing: 0.5px;
+      -moz-letter-spacing: 0.5px;
+      -ms-letter-spacing: 0.5px;
+      letter-spacing: 0.5px;
+    }
   }
 
-  &__title {
-    margin: 0 0 10px;
-    color: #444;
-    font-size: 1.25rem;
-    font-weight: 600;
-    line-height: 1.75rem;
+  .card_body {
+    height: 54px;
+    margin-top: 27px;
+    margin-bottom: 9px;
+    -webkit-font-smoothing: antialiased;
+    p {
+      margin: 0;
+      font-size: 13px;
+      font-weight: 400;
+    }
+  }
+
+  .card_footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    width: 100%;
+    height: 45px;
+    padding: 0.9rem 1.5rem 1rem;
+    background-color: #fafafb;
+    -webkit-box-pack: justify;
+    -webkit-justify-content: space-between;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    -webkit-flex-direction: row-reverse;
+    -ms-flex-direction: row-reverse;
+    flex-direction: row-reverse;
+    cursor: initial;
   }
 `;
 
-export default function Card(props) {
-  return (
-    <CardColumn>
-      <Article>
-        <h3>{props.category}</h3>
-        <h2>{props.title}</h2>
-        <p>{props.excerpt}</p>
-      </Article>
-    </CardColumn>
-  )
-};
+export default CardView;

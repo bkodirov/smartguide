@@ -4,7 +4,6 @@ export default styled.div`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  width: 90%;
-  max-width: 960px;
+  width: 100%;
   margin: 0 auto;
 `;
