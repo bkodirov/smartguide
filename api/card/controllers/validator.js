@@ -2,7 +2,8 @@ const Joi = require('joi');
 
 const schema = Joi.object({
   id: Joi.array().items(Joi.string().min(2).max(200)),
-  title: Joi.array().items(Joi.string().min(2).max(255)),
+  title: Joi.string().min(2).max(255),
+  type: Joi.string().min(2).max(255),
   tags: Joi.array().items(Joi.string().min(2).max(12)),
   cards: Joi.array().items(Joi.link('/')),
   use_cases: Joi.array().items(Joi.link('#use_case')),

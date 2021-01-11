@@ -26,12 +26,22 @@ module.exports = {
   },
 
   async create(ctx) {
+    const { error } = validator.validateBody(ctx.request.body);
+    if (error) {
+      ctx.send(error.details[0], 400);
+      return
+    }
     await strapi.services['use-case'].create(ctx.request.body);
     return ctx.response.created();
   },
 
   async update(ctx) {
     const {id} = ctx.params;
+    const bodyValidation  = validator.validateBody(ctx.request.body);
+    const idValidation = validator.validateId(id);
+    if (bodyValidation.error) return ctx.send(bodyValidation.error.details[0], 400);
+    if (idValidation.error) return ctx.send(idValidation.error.details[0], 400);
+
     const updated = await strapi.services['use-case'].update(id, ctx.request.body);
     if (updated) {
       ctx.send({message: `Record with id:${id} updated`});
@@ -42,6 +52,9 @@ module.exports = {
 
   async delete(ctx) {
     const {id} = ctx.params;
+    const idValidation = validator.validateId(id);
+    if (idValidation.error) return ctx.send(idValidation.error.details[0], 400);
+
     const deleteEntity = await strapi.services['use-case'].delete(id);
     if (deleteEntity) {
       ctx.deleted();

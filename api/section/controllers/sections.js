@@ -33,7 +33,7 @@ module.exports = {
   async create(ctx) {
     const { error } = validator.validateBody(ctx.request.body);
     if (error) {
-      return ctx.send({error}, 400);
+      return ctx.send(error.details[0], 400);
     }
     await strapi.services.section.create(ctx.request.body);
     return ctx.response.created();
@@ -43,8 +43,8 @@ module.exports = {
     const {id} = ctx.params;
     const bodyValidation  = validator.validateBody(ctx.request.body);
     const idValidation = validator.validateId(id);
-    if (bodyValidation.error) return ctx.send({error: bodyValidation.error}, 400);
-    if (idValidation.error) return ctx.send({error: idValidation.error}, 400);
+    if (bodyValidation.error) return ctx.send(bodyValidation.error.details[0], 400);
+    if (idValidation.error) return ctx.send(idValidation.error.details[0], 400);
 
     const updated = await strapi.services.section.update(id, ctx.request.body);
     if (updated) {
@@ -57,7 +57,7 @@ module.exports = {
   async delete(ctx) {
     const {id} = ctx.params;
     const idValidation = validator.validateId(id);
-    if (idValidation.error) return ctx.send({error: idValidation.error}, 400);
+    if (idValidation.error) return ctx.send(idValidation.error.details[0], 400);
 
     const deleteEntity = await strapi.services.section.delete(id);
     if (deleteEntity) {

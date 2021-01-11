@@ -18,7 +18,6 @@ const schema = Joi.object({
     }).required()),
     tags: Joi.array().items(Joi.string().min(2).max(12)),
   }),
-  id: Joi.string(),
 })
   .required().xor('conclusion', 'question')
   .id('node');

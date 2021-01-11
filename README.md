@@ -8,9 +8,7 @@
 ###Section
 ```
 section: {
-    id: "any",
     title: "123",
-    type: "somethins",
     tags: [],
     cards: [ #card ],
 }
@@ -34,6 +32,7 @@ card: {
 use_case: {
     id: "1",
     title: "1234",
+    "tags": [],
     head_node: #node,
 }
 ```
@@ -42,7 +41,7 @@ use_case: {
 ###Node
 ```
 node = {
-    "id": "1",
+    "use_case": "1",
     "parent_node_id": #node |'root' ,
     "question": {
         "explanation": "",
