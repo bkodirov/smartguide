@@ -1,18 +1,16 @@
 'use strict';
-const {create, find, count, update, remove, findAll} = require('./repo');
+const {create, find, count, update, remove, findAll, search} = require('./repo');
 /**
  * Read the documentation (https://strapi.io/documentation/v3.x/concepts/services.html#core-services)
  * to customize this service
  */
 
 module.exports = {
+  async search(term) {
+    return search(term);
+  },
   async find() {
-    try {
-      return findAll();
-    } catch (e) {
-      strapi.log.error(`Finding Node errored out => ${e}`);
-      return Error(e);
-    }
+    return findAll();
   },
   async count() {
     return count();

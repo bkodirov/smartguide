@@ -8,7 +8,13 @@ const validator = require('./validator');
 module.exports = {
 
   async find(ctx) {
-    return await strapi.services.node.find(ctx.query);
+    let entities;
+    if (ctx.query._term) {
+      entities = await strapi.services.node.search(ctx.query._term);
+    } else {
+      entities = await strapi.services.node.find();
+    }
+    return entities;
   },
 
   async count(ctx) {

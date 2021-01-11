@@ -1,4 +1,4 @@
-const {ObjectID} = require ('mongodb');
+const {ObjectID} = require('mongodb');
 
 async function create(data) {
   if (!data) throw new Error('Data is required');
@@ -19,6 +19,22 @@ async function findAll() {
   return resultArray;
 }
 
+async function search(term) {
+  const cursor = await strapi.connections.mongo.connection.db.collection('nodes').find(
+    {
+      $or: [
+        {"question.question_text": {$regex: term, $options: "$i"}},
+        {"conclusion.text": {$regex: term, $options: "$i"}}
+      ]
+    }
+  );
+  const resultArray = [];
+  for await (const doc of cursor) {
+    resultArray.push(doc);
+  }
+  return resultArray;
+}
+
 async function count() {
   return await strapi.connections.mongo.connection.db.collection('nodes').countDocuments();
 }
@@ -26,7 +42,7 @@ async function count() {
 async function update(dataId, data) {
   if (!data) throw new Error('Data is required');
   if (!dataId) throw new Error('Data ID is required');
-  const result = await strapi.connections.mongo.connection.db.collection('nodes').replaceOne({ _id: ObjectID(dataId) }, data);
+  const result = await strapi.connections.mongo.connection.db.collection('nodes').replaceOne({_id: ObjectID(dataId)}, data);
   return result.result.ok === 1 && result.result.n > 0;
 }
 
@@ -36,4 +52,4 @@ async function remove(dataId) {
   return deletionResult.deletedCount === 1;
 }
 
-module.exports = {create, find, count, findAll, remove, update};
+module.exports = {create, find, count, findAll, remove, update, search};
