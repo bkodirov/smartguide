@@ -1,131 +1,114 @@
 import React, { memo, useState } from "react";
-import {
-  request,
-  PluginHeader,
-  Modal,
-  ModalFooter,
-  ModalBody,
-  ModalHeader,
-} from "strapi-helper-plugin";
-import { AddCard, DataCard } from "../../components/Card";
+import { request } from "strapi-helper-plugin";
 import Background from "../../components/Card/Background";
 import Container from "../../components/Card/CardContainer";
-import Block from "../../components/Block";
-import { Button, Flex, InputText, Label } from "@buffetjs/core";
-import { Inputs } from "@buffetjs/custom";
-import WysiwygWithErrors from "../../components/WysiwygWithErrors";
+import { Header } from "@buffetjs/custom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { List } from "@buffetjs/custom";
+import {
+  faTrashAlt,
+  faPencilAlt,
+  faCube,
+} from "@fortawesome/free-solid-svg-icons";
+import ListRow from "../../components/ListRow";
+import { useHistory } from "react-router-dom";
+import pluginId from "../../pluginId";
+import ModalView from "../../components/ModalView";
 
 function HomePage() {
-  const [val, setValue] = useState("");
+  const history = useHistory();
+
   const [isOpen, setIsOpen] = useState(false);
+
   const handleToggle = () => {
     setIsOpen(!isOpen);
   };
   const handleClose = () => {
     setIsOpen(false);
   };
+
+  const props = {
+    title: "Sections",
+    subtitle: "Subtitle",
+    button: {
+      color: "secondary",
+      icon: true,
+      label: "New",
+      onClick: () => handleToggle(),
+      type: "button",
+    },
+  };
+
+  const handleEditClick = (e) => {
+    alert("Edit");
+    e.stopPropagation();
+  };
+
+  const handleDeleteClick = (e) => {
+    alert("Delete");
+    e.stopPropagation();
+  };
+
+  const rows = [
+    {
+      icon: "1.",
+      name: "Section one",
+      description: "Section one description.",
+      links: [
+        {
+          icon: <FontAwesomeIcon icon={faPencilAlt} />,
+          onClick: handleEditClick,
+        },
+        {
+          icon: <FontAwesomeIcon icon={faTrashAlt} />,
+          onClick: handleDeleteClick,
+        },
+      ],
+      onClick: () => history.push(`/plugins/${pluginId}/section`),
+    },
+    {
+      icon: "2.",
+      name: "Section two",
+      description: "Section two description.",
+      links: [
+        {
+          icon: <FontAwesomeIcon icon={faPencilAlt} />,
+          onClick: handleEditClick,
+        },
+        {
+          icon: <FontAwesomeIcon icon={faTrashAlt} />,
+          onClick: handleDeleteClick,
+        },
+      ],
+      onClick: () => history.push(`/plugins/${pluginId}/section`),
+    },
+  ];
+
   return (
     <Background>
       <Container>
         <div className={"container-fluid"} style={{ padding: "18px 30px" }}>
-          <PluginHeader
-            title={"Flow constructor"}
-            description={"Managing flow constructors easy with us!"}
+          <Header
+            title={{
+              label: "Flow constructor",
+            }}
+            content="Managing flow constructors easy with us!"
           />
           <div className="row">
-            <Block
-              title="General"
-              description="Configure the Flow Constructor"
-              style={{ marginBottom: 12 }}
-            >
-              <div className="row">
-                <div className="col-md-4">
-                  <DataCard
-                    category="Leasing"
-                    title="SubTopic"
-                    excerpt="Subsection description"
-                    edit={() => setIsOpen(true)}
-                  />
-                </div>
-                <div className="col-md-4">
-                  <DataCard
-                    category="Leasing"
-                    title="SubTopic"
-                    excerpt="Subsection description"
-                    edit={() => setIsOpen(true)}
-                  />
-                </div>
-                <div className="col-md-4">
-                  <AddCard edit={() => setIsOpen(true)} />
-                </div>
-              </div>
-            </Block>
+            <div className="col-md-12">
+              <List
+                {...props}
+                items={rows}
+                customRowComponent={(props) => <ListRow {...props} />}
+              />
+            </div>
           </div>
-          <Modal isOpen={isOpen} onToggle={handleToggle} onClosed={handleClose}>
-            <ModalHeader
-              withBackButton
-              headerBreadcrumbs={["SubSection"]}
-              onClickGoBack={handleClose}
-            />
-            <ModalBody>
-              <div className="col-md-6 mb-5">
-                <Label htmlFor="name">Name</Label>
-                <InputText
-                  name="name"
-                  onChange={({ target: { value } }) => {
-                    setValue(value);
-                  }}
-                  type="text"
-                  value={val}
-                />
-              </div>
-              <div className="col-md-12">
-                <Inputs
-                  customInputs={{ wysiwyg: WysiwygWithErrors }} // Props to pass custom input type to the component
-                  name="description"
-                  type="wysiwyg"
-                  label="Description"
-                  onChange={({ target: { value } }) => {
-                    setValue(value);
-                  }}
-                  translatedErrors={{
-                    date: "This is not a date",
-                    email: "This is not an email",
-                    string: "This is not a string",
-                    number: "This is not a number",
-                    json: "This is not a JSON",
-                    max: "This is too high",
-                    maxLength: "This is too long",
-                    min: "This is too small",
-                    minLength: "This is too short",
-                    required: "This value is required",
-                    regex: "This does not match the format",
-                    uppercase: "This must be a upper case string",
-                  }}
-                  value={val}
-                />
-              </div>
-            </ModalBody>
-            <ModalFooter>
-              <section>
-                <Flex>
-                  <Button
-                    color="cancel"
-                    onClick={handleToggle}
-                    className="mr-3"
-                  >
-                    Cancel
-                  </Button>
-                  <Button color="delete" onClick={handleToggle}>
-                    Delete
-                  </Button>
-                </Flex>
-                <Button color="success" onClick={handleToggle}>
-                  Save
-                </Button>
-              </section>
-            </ModalFooter>
-          </Modal>
+          <ModalView
+            isOpen={isOpen}
+            handleClose={handleClose}
+            handleToggle={handleToggle}
+            name={["Section"]}
+          />
         </div>
       </Container>
     </Background>
