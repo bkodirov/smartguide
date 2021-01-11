@@ -1,9 +1,10 @@
 const Joi = require('joi');
+const {nodeSchema} = require('../../node/controllers/validator');
 
 const schema = Joi.object({
-  id: Joi.string().min(1).max(100),
+  title: Joi.string().min(1).max(100),
   tags: Joi.array().items(Joi.string().min(2).max(12).required()),
-  head_node: Joi.link('#node').required(),
+  head_node: nodeSchema.required(),
 })
   .required()
   .id('use_case');

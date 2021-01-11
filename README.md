@@ -30,7 +30,6 @@ card: {
 ###Use Case
 ```
 use_case: {
-    id: "1",
     title: "1234",
     "tags": [],
     head_node: #node,

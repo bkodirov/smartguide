@@ -26,4 +26,5 @@ const schema = Joi.object({
 module.exports = {
   validateBody: (body) => schema.validate(body),
   validateId: (id) => Joi.string().min(12).max(30).required().validate(id),
+  nodeSchema: schema
 };
