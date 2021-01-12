@@ -22,20 +22,24 @@ module.exports = {
     if (!results) return null;
     results = await Promise.all(results.map(async useCase => {
       if (useCase.head_node) useCase.head_node = await strapi.services.node.findOne(useCase.head_node);
+      if (useCase.nodes) useCase.nodes = await Promise.all(useCase.nodes.map(nodeId => strapi.services.node.findOne(nodeId)));
       return useCase;
     }));
     return results;
 
   },
+
   async count() {
     return count();
   },
+
   async findOne(id) {
     // Append head node
     const result = await find(id);
     if (!result) return null;
     if (result.head_node) {
       result.head_node = await strapi.services.node.findOne(result.head_node);
+      if (result.nodes) result.nodes = await Promise.all(result.nodes.map(nodeId => strapi.services.node.findOne(nodeId)));
     }
     return result;
   },
