@@ -8,7 +8,7 @@ const schema = Joi.object({
     tags: Joi.array().items(Joi.string().min(2).max(12)),
     answers: Joi.array().items(Joi.object({
       text: Joi.string().required(),
-      node: Joi.link('/').allow(null),
+      node: Joi.string().min(12).max(30),
     }).optional())
   }),
   conclusion: Joi.object({
