@@ -1,11 +1,11 @@
 # Smartguide app
 
-##ApiDoc
+## ApiDoc
 ### Import Postman queries: [![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/3a2c1a5467e8616c957f)
 ### [Web based API doc](https://documenter.getpostman.com/view/11580523/TVzPoKiq)
 
 ##Samples
-###Section
+### Section
 ```
 section: {
     title: "123",
@@ -14,7 +14,7 @@ section: {
 }
 ```
 
-###Card
+### Card
 ```
 card: {
     id: "1",
@@ -27,7 +27,7 @@ card: {
 ```
 
 
-###Use Case
+### Use Case
 ```
 use_case: {
     title: "1234",
@@ -37,7 +37,7 @@ use_case: {
 ```
 
 
-###Node
+### Node
 ```
 node = {
     "use_case": "1",
@@ -66,5 +66,5 @@ node = {
 }
 ```
 
-##Lucidchart
+## Lucidchart
 [Editable link](https://lucid.app/lucidchart/invitations/accept/c548bc61-6707-46c1-bb52-afb094478858)
