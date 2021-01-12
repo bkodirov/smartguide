@@ -10,7 +10,11 @@ const Block = ({ children, description, style, title, action }) => (
         <Sub>
           {!!title && <p>{title} </p>} {!!description && <p>{description} </p>}
         </Sub>
-        <Button color="secondary" icon={true} label="New" onClick={action} />
+        {action ? (
+          <Button color="secondary" icon={true} label="New" onClick={action} />
+        ) : (
+          ""
+        )}
       </SubHeader>
       {children}
     </Wrapper>

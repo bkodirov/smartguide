@@ -6,14 +6,22 @@ import Container from "../../components/Card/CardContainer";
 import Block from "../../components/Block";
 import { Header } from "@buffetjs/custom";
 import ModalView from "../../components/ModalView";
+import { Option, InputText } from "@buffetjs/core";
 
 function SectionPage() {
+  const [val, setValue] = useState("");
+  const [tags, setTags] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const handleToggle = () => {
     setIsOpen(!isOpen);
   };
   const handleClose = () => {
     setIsOpen(false);
+  };
+  const addTags = (event) => {
+    event.preventDefault();
+    setTags([...tags, val]);
+    setValue("");
   };
   return (
     <Background>
@@ -76,14 +84,38 @@ function SectionPage() {
                   />
                 </div>
                 <div className="col-md-3">
-                  <UseCaseCard
-                    title="UseCase name"
-                    edit={handleToggle}
-                  />
+                  <UseCaseCard title="UseCase name" edit={handleToggle} />
                 </div>
               </div>
             </Block>
           </div>
+
+          <div className="row">
+            <Block title="Tags" description="" style={{ marginBottom: 24 }}>
+              <div style={{ display: "flex", flexWrap: "wrap" }}>
+                <Option label="Tag" margin="0 10px 6px 0" />
+                {tags.map((tag, index) => (
+                  <Option key={index} label={tag} margin="0 10px 6px 0" />
+                ))}
+              </div>
+              <div className="row">
+                <div className="col-md-6">
+                  <form onSubmit={addTags}>
+                    <InputText
+                      name="tag"
+                      onChange={({ target: { value } }) => {
+                        setValue(value);
+                      }}
+                      placeholder="tags..."
+                      type="text"
+                      value={val}
+                    />
+                  </form>
+                </div>
+              </div>
+            </Block>
+          </div>
+
           <ModalView
             isOpen={isOpen}
             handleClose={handleClose}
