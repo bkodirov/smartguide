@@ -33,6 +33,7 @@ use_case: {
     title: "1234",
     "tags": [],
     head_node: #node,
+    nodes: [ #node ]
 }
 ```
 
@@ -40,8 +41,7 @@ use_case: {
 ### Node
 ```
 node = {
-    "use_case": "1",
-    "parent_node_id": #node |'root' ,
+    "use_case_id: "1",
     "question": {
         "explanation": "",
         "question_text": "123",
@@ -49,7 +49,7 @@ node = {
         "answers": [
             {
                 "text": "123",
-                "node": #node"
+                "node_id": "node_id_3""
             }
         ]
     },
@@ -65,6 +65,8 @@ node = {
     }
 }
 ```
+
+Objects are substituted into IDs in DB.
 
 ## Lucidchart
 [Editable link](https://lucid.app/lucidchart/invitations/accept/c548bc61-6707-46c1-bb52-afb094478858)

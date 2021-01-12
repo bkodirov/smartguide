@@ -1,6 +1,7 @@
 const Joi = require('joi');
 
 const schema = Joi.object({
+  use_case_id: Joi.string().min(12).max(30).required(),
   question: Joi.object({
     explanation: Joi.string().allow(''),
     question_text: Joi.string().required(),
