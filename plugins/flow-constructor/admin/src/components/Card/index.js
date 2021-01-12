@@ -1,5 +1,5 @@
 import React from "react";
-import CardView from "./CardView";
+import { CardView, UseCaseCardView } from "./CardView";
 import { Button } from "@buffetjs/core";
 
 function AddCard({ edit }) {
@@ -40,4 +40,17 @@ function DataCard({ title, excerpt, edit }) {
   );
 }
 
-export { AddCard, DataCard };
+function UseCaseCard({ title, edit }) {
+  return (
+    <UseCaseCardView>
+      <div className="card_title">
+        <h3>{title}</h3>
+      </div>
+      <div className="card_footer">
+        <Button color="primary" label="Edit" onClick={edit} />
+      </div>
+    </UseCaseCardView>
+  );
+}
+
+export { AddCard, DataCard, UseCaseCard };

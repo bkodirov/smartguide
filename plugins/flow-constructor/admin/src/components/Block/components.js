@@ -22,5 +22,12 @@ const Sub = styled.div`
     font-size: 13px;
   }
 `;
+const SubHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 16px;
+`;
 
-export { Wrapper, Sub };
+export { Wrapper, Sub, SubHeader };
