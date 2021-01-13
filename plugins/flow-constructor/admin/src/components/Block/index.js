@@ -1,13 +1,21 @@
 import React, { memo } from "react";
 import PropTypes from "prop-types";
-import { Wrapper, Sub } from "./components";
+import { Wrapper, Sub, SubHeader } from "./components";
+import { Button } from "@buffetjs/core";
 
-const Block = ({ children, description, style, title }) => (
+const Block = ({ children, description, style, title, action }) => (
   <div className="col-md-12">
     <Wrapper style={style}>
-      <Sub>
-        {!!title && <p>{title} </p>} {!!description && <p>{description} </p>}
-      </Sub>
+      <SubHeader>
+        <Sub>
+          {!!title && <p>{title} </p>} {!!description && <p>{description} </p>}
+        </Sub>
+        {action ? (
+          <Button color="secondary" icon={true} label="New" onClick={action} />
+        ) : (
+          ""
+        )}
+      </SubHeader>
       {children}
     </Wrapper>
   </div>
