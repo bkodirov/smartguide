@@ -26,6 +26,8 @@ module.exports = {
   },
 
   async create(ctx) {
+    // 1. Create a card
+    // 2. Update the parent Card or Section
     const { error } = validator.validateBody(ctx.request.body);
     if (error) {
       ctx.send(error.details[0], 400);
@@ -51,6 +53,9 @@ module.exports = {
   },
 
   async delete(ctx) {
+    // 1. Delete all children recursively without updating parent. Go only on one direction
+    // 2. Update the parent;
+    // 3. Delete the current card
     const {id} = ctx.params;
     const idValidation = validator.validateId(id);
     if (idValidation.error) return ctx.send(idValidation.error.details[0], 400);
