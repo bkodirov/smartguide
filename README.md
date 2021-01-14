@@ -17,7 +17,8 @@ section: {
 ### Card
 ```
 card: {
-    id: "1",
+    parent_card_id: "asdasd",
+    section_id: "asdasd",
     title: "123",
     type: "1234",
     tags: [],

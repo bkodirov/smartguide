@@ -2,12 +2,17 @@ const {ObjectID} = require ('mongodb');
 
 async function create(card) {
   if (!card) throw new Error('Card is required');
-  return await strapi.connections.mongo.connection.db.collection('cards').insertOne(card);
+  const result = await strapi.connections.mongo.connection.db.collection('cards').insertOne(card);
+  if (!result.ops || result.ops.length === 0) {
+    throw Error(`No Object is returned for object creation. ${JSON.stringify(result, null, 2)}`);
+  }
+  return toJson(result.ops[0]);
 }
 
 async function find(cardId) {
   if (!cardId) throw new Error('Card ID is required');
-  return strapi.connections.mongo.connection.db.collection('cards').findOne({_id: ObjectID(cardId)});
+  const result = strapi.connections.mongo.connection.db.collection('cards').findOne({_id: ObjectID(cardId)});
+  return toJson(result);
 }
 
 async function findAll() {
@@ -16,7 +21,7 @@ async function findAll() {
   for await (const doc of cursor) {
     resultArray.push(doc);
   }
-  return resultArray;
+  return resultArray.map(value => toJson(value));
 }
 
 async function count() {
@@ -36,3 +41,11 @@ async function remove(cardId) {
 }
 
 module.exports = {create, find, count, findAll, remove, update};
+
+
+function toJson(node) {
+  if (node && node._id) {
+    node._id = node._id.toString();
+  }
+  return node;
+}

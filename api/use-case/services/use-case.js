@@ -33,11 +33,11 @@ module.exports = {
     return count();
   },
 
-  async findOne(id) {
+  async findOne(id, recursive = true) {
     // Append head node
     const result = await find(id);
     if (!result) return null;
-    if (result.head_node) {
+    if (result.head_node && recursive) {
       result.head_node = await strapi.services.node.findOne(result.head_node);
       if (result.nodes) result.nodes = await Promise.all(result.nodes.map(nodeId => strapi.services.node.findOne(nodeId)));
     }
