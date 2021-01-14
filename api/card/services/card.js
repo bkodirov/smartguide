@@ -22,13 +22,29 @@ module.exports = {
     return count();
   },
 
-  async findOne(id) {
+  async findOne(id, recursive = true) {
     const card = await find(id);
+    if (!recursive) return card;
     return populateCard(card)
   },
 
-  async create(node) {
-    return create(node);
+  async create(cardToCreate) {
+    const card = await create(cardToCreate);
+    if (card.parent_card_id) {
+      const parentCard = await find(card.parent_card_id);
+      if (!parentCard.cards) {
+        parentCard.cards = [];
+      }
+      await update(card.parent_card_id, parentCard);
+    } else if (card.section_id) {
+      const section = await strapi.services.section.findOne(card.section_id);
+      if (!section.cards) {
+        section.cards = []
+      }
+      section.cards.push(card.section_id);
+      await strapi.services.section.update(card.section_id, section);
+    }
+    return card;
   },
 
   async update(cardId, card) {
