@@ -16,15 +16,17 @@ module.exports = {
   async findOne(id) {
     return find(id);
   },
-  async create(node) {
-    return create(node);
+  async create(section) {
+    return create(section);
   },
-  async update(cardId, card) {
-    return update(cardId, card)
+  async update(sectionId, section) {
+    return update(sectionId, section)
   },
-  async delete(cardId) {
-    const section =  await find(cardId);
-    section.cards.map(cardId => strapi.services.card.findOne(cardId))
-    return remove(cardId);
+  async delete(sectionId) {
+    const section =  await find(sectionId);
+    if (section.cards) {
+      section.cards.map(sectionId => strapi.services.card.findOne(sectionId))
+    }
+    return remove(sectionId);
   },
 };

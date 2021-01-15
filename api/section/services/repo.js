@@ -1,17 +1,18 @@
 const {ObjectID} = require ('mongodb');
 
-async function create(card) {
-  if (!card) throw new Error('Card is required');
-  const result = await strapi.connections.mongo.connection.db.collection('sections').insertOne(card);
+async function create(section) {
+  if (!section) throw new Error('Section is required');
+  convertDbModel(section);
+  const result = await strapi.connections.mongo.connection.db.collection('sections').insertOne(section);
   if (!result.ops || result.ops.length === 0) {
     throw Error(`No Object is returned for object creation. ${JSON.stringify(result, null, 2)}`);
   }
   return toJson(result.ops[0]);
 }
 
-async function find(cardId) {
-  if (!cardId) throw new Error('Card ID is required');
-  const result = strapi.connections.mongo.connection.db.collection('sections').findOne({_id: ObjectID(cardId)});
+async function find(sectionId) {
+  if (!sectionId) throw new Error('Section ID is required');
+  const result = await strapi.connections.mongo.connection.db.collection('sections').findOne({_id: ObjectID(sectionId)});
   return toJson(result);
 }
 
@@ -28,15 +29,16 @@ async function count() {
   return await strapi.connections.mongo.connection.db.collection('sections').countDocuments();
 }
 
-async function update(cardId, card) {
-  if (!card) throw new Error('Card is required');
-  const result = await strapi.connections.mongo.connection.db.collection('sections').replaceOne({ _id: ObjectID(cardId) }, card);
+async function update(sectionId, section) {
+  if (!section) throw new Error('Section is required');
+  convertDbModel(section);
+  const result = await strapi.connections.mongo.connection.db.collection('sections').replaceOne({ _id: ObjectID(sectionId) }, section);
   return result.result.ok === 1 && result.result.n > 0;
 }
 
-async function remove(cardId) {
-  if (!cardId) throw new Error('Card is required');
-  const deletionResult = await strapi.connections.mongo.connection.db.collection('sections').deleteOne({_id: ObjectID(cardId)});
+async function remove(sectionId) {
+  if (!sectionId) throw new Error('Section is required');
+  const deletionResult = await strapi.connections.mongo.connection.db.collection('sections').deleteOne({_id: ObjectID(sectionId)});
   return deletionResult.deletedCount === 1;
 }
 
@@ -47,4 +49,13 @@ function toJson(node) {
     node._id = node._id.toString();
   }
   return node;
+}
+
+function convertDbModel(data) {
+  if (!data) return data;
+  if (data.cards) {
+    data.cards = data.cards.map(card => card._id)
+  }
+  delete data._id;
+  return data
 }

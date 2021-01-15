@@ -3,6 +3,7 @@ const {ObjectID} = require('mongodb');
 async function create(data) {
   if (!data) throw new Error('Data is required');
   const result = await strapi.connections.mongo.connection.db.collection('nodes').insertOne(data);
+  convertDbModel(result);
   if (!result.ops || result.ops.length === 0) {
     throw Error(`No Object is returned for object creation. ${JSON.stringify(result, null, 2)}`);
   }
@@ -47,6 +48,7 @@ async function count() {
 async function update(dataId, data) {
   if (!data) throw new Error('Data is required');
   if (!dataId) throw new Error('Data ID is required');
+  convertDbModel(data);
   const result = await strapi.connections.mongo.connection.db.collection('nodes').replaceOne({_id: ObjectID(dataId)}, data);
   return result.result.ok === 1 && result.result.n > 0;
 }
@@ -64,4 +66,13 @@ function toJson(node) {
     node._id = node._id.toString();
   }
   return node;
+}
+
+function convertDbModel(data) {
+  if (!data) return data;
+  if (data.cards) {
+    data.cards = data.cards.map(card => card._id)
+  }
+  delete data._id;
+  return data
 }

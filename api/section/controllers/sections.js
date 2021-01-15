@@ -35,8 +35,8 @@ module.exports = {
     if (error) {
       return ctx.send(error.details[0], 400);
     }
-    await strapi.services.section.create(ctx.request.body);
-    return ctx.response.created();
+    const newSection = await strapi.services.section.create(ctx.request.body);
+    return ctx.response.created(newSection);
   },
 
   async update(ctx) {

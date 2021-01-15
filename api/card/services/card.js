@@ -38,6 +38,7 @@ module.exports = {
       await update(card.parent_card_id, parentCard);
     } else if (card.section_id) {
       const section = await strapi.services.section.findOne(card.section_id);
+      if (!section) throw Error(`Section with id=${card.section_id} not found`);
       if (!section.cards) {
         section.cards = []
       }
