@@ -8,22 +8,38 @@ import { List } from "@buffetjs/custom";
 import {
   faTrashAlt,
   faPencilAlt,
-  faCube,
 } from "@fortawesome/free-solid-svg-icons";
 import ListRow from "../../components/ListRow";
 import { useHistory } from "react-router-dom";
 import pluginId from "../../pluginId";
-import ModalView from "../../components/ModalView";
+import {
+  AddSection,
+  DeleteSection,
+  EditSection,
+} from "../../components/Section";
 
 function HomePage() {
   const history = useHistory();
   const [loading, setLoading] = useState(false);
   const [sections, setSections] = useState([]);
   const [currentSection, setCurrentSection] = useState({});
-  const [isOpen, setIsOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  const handleToggle = (data) => {
-    setIsOpen(!isOpen);
+  const handleEditToggle = (data) => {
+    setIsEditModalOpen(!isEditModalOpen);
+    if (data) {
+      setCurrentSection(data);
+    } else {
+      setCurrentSection({});
+    }
+  };
+  const handleAddToggle = () => {
+    setIsAddModalOpen(!isAddModalOpen);
+  };
+  const handleDeleteToggle = (data) => {
+    setIsDeleteModalOpen(!isDeleteModalOpen);
     if (data) {
       setCurrentSection(data);
     } else {
@@ -31,7 +47,9 @@ function HomePage() {
     }
   };
   const handleClose = () => {
-    setIsOpen(false);
+    setIsAddModalOpen(false);
+    setIsEditModalOpen(false);
+    setIsDeleteModalOpen(false);
   };
 
   const getAllSections = async () => {
@@ -42,22 +60,6 @@ function HomePage() {
       });
       setLoading(false);
       setSections(response);
-    } catch (error) {
-      setLoading(false);
-      strapi.notification.error("An error occured");
-    }
-  };
-
-  const createNewSection = async (data) => {
-    setLoading(true);
-    try {
-      const response = await request("/sections", {
-        method: "POST",
-        body: data,
-      });
-      setLoading(false);
-      setSections(response);
-      strapi.notification.success("Saved");
     } catch (error) {
       setLoading(false);
       strapi.notification.error("An error occured");
@@ -75,20 +77,20 @@ function HomePage() {
       color: "secondary",
       icon: true,
       label: "New",
-      onClick: () => handleToggle(),
+      onClick: () => handleAddToggle(),
       type: "button",
     },
     isLoading: loading,
   };
 
   const handleEditClick = (event, data) => {
-    handleToggle(data);
+    handleEditToggle(data);
     event.stopPropagation();
   };
 
-  const handleDeleteClick = (e) => {
-    alert("Delete");
-    e.stopPropagation();
+  const handleDeleteClick = (event, data) => {
+    handleDeleteToggle(data);
+    event.stopPropagation();
   };
 
   const rows = sections.map((item, index) => {
@@ -103,7 +105,7 @@ function HomePage() {
         },
         {
           icon: <FontAwesomeIcon icon={faTrashAlt} />,
-          onClick: handleDeleteClick,
+          onClick: (event) => handleDeleteClick(event, item),
         },
       ],
       onClick: () => history.push(`/plugins/${pluginId}/section`),
@@ -129,13 +131,24 @@ function HomePage() {
               />
             </div>
           </div>
-          <ModalView
-            isOpen={isOpen}
+          <AddSection
+            isOpen={isAddModalOpen}
             handleClose={handleClose}
-            handleToggle={handleToggle}
-            name={["Section"]}
-            tags
-            handleSubmit={createNewSection}
+            handleToggle={handleAddToggle}
+            updateSection={() => getAllSections()}
+          />
+          <EditSection
+            isOpen={isEditModalOpen}
+            handleClose={handleClose}
+            handleToggle={handleEditToggle}
+            updateSection={() => getAllSections()}
+            data={currentSection}
+          />
+          <DeleteSection
+            isOpen={isDeleteModalOpen}
+            handleClose={handleClose}
+            handleToggle={handleDeleteToggle}
+            updateSection={() => getAllSections()}
             data={currentSection}
           />
         </div>
