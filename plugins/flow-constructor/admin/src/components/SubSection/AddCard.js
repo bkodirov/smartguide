@@ -8,25 +8,26 @@ import {
 } from "strapi-helper-plugin";
 import { Button, Flex, InputText, Label, Option } from "@buffetjs/core";
 
-export default function EditSection({
+export default function AddCard({
   isOpen,
   handleClose,
   handleToggle,
   updateSection,
-  data,
+  sectionId,
 }) {
   const [loading, setLoading] = useState();
   const [tag, setTag] = useState("");
   const [val, setValue] = useState({
+    section_id: "",
     title: "",
     tags: [],
   });
 
   useEffect(() => {
-    setValue({ title: data.title, tags: data.tags });
-  }, [data]);
+    setValue({ ...val, section_id: sectionId });
+  }, [sectionId]);
 
-  const addTag = () => {
+  const addTags = () => {
     if (tag === "") {
       return;
     }
@@ -39,15 +40,16 @@ export default function EditSection({
     setValue({ ...val, tags: filteredTags });
   };
 
-  const sectionUpdate = async () => {
+  const createNewCard = async () => {
     setLoading(true);
+    console.log("values => ", val);
     try {
-      await request(`/sections/${data._id}`, {
-        method: "PUT",
+      await request("/cards", {
+        method: "POST",
         body: val,
       });
       setLoading(false);
-      strapi.notification.success("Updated");
+      strapi.notification.success("Saved");
       handleClose();
       updateSection();
     } catch (error) {
@@ -61,7 +63,7 @@ export default function EditSection({
     <Modal isOpen={isOpen} onToggle={handleToggle} onClosed={handleClose}>
       <ModalHeader
         withBackButton
-        headerBreadcrumbs={["Section"]}
+        headerBreadcrumbs={["SubSection"]}
         onClickGoBack={handleClose}
       />
       <ModalBody>
@@ -80,9 +82,9 @@ export default function EditSection({
           <div className="col-md-12">
             <Label htmlFor="tag">Tags</Label>
             <div style={{ display: "flex", flexWrap: "wrap" }}>
-              {val.tags?.map((tag, id) => (
+              {val.tags?.map((tag, index) => (
                 <Option
-                  key={id}
+                  key={index}
                   label={tag}
                   margin="0 10px 6px 0"
                   onClick={() => deleteTag(tag)}
@@ -101,7 +103,7 @@ export default function EditSection({
                   value={tag}
                   onKeyPress={(event) => {
                     if (event.key === "Enter") {
-                      addTag();
+                      addTags();
                     }
                   }}
                 />
@@ -117,7 +119,7 @@ export default function EditSection({
               Cancel
             </Button>
           </Flex>
-          <Button color="success" onClick={sectionUpdate} isLoading={loading}>
+          <Button color="success" onClick={createNewCard} isLoading={loading}>
             Save
           </Button>
         </section>

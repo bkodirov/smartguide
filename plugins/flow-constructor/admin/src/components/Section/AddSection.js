@@ -29,6 +29,11 @@ export default function AddSection({
     setTag("");
   };
 
+  const deleteTag = (id) => {
+    const filteredTags = val.tags.filter((tag) => tag !== id);
+    setValue({ ...val, tags: filteredTags });
+  };
+
   const createNewSection = async () => {
     setLoading(true);
     try {
@@ -71,7 +76,12 @@ export default function AddSection({
             <Label htmlFor="tag">Tags</Label>
             <div style={{ display: "flex", flexWrap: "wrap" }}>
               {val.tags?.map((tag, index) => (
-                <Option key={index} label={tag} margin="0 10px 6px 0" />
+                <Option
+                  key={index}
+                  label={tag}
+                  margin="0 10px 6px 0"
+                  onClick={() => deleteTag(tag)}
+                />
               ))}
             </div>
             <div className="row">
