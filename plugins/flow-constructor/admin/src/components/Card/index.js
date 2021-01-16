@@ -1,6 +1,8 @@
 import React from "react";
 import { CardView, UseCaseCardView } from "./CardView";
 import { Button } from "@buffetjs/core";
+import pluginId from "../../pluginId";
+import { Link } from "react-router-dom";
 
 function AddCard({ edit }) {
   return (
@@ -24,12 +26,15 @@ function AddCard({ edit }) {
   );
 }
 
-function DataCard({ title, excerpt, edit }) {
+function DataCard({ title, excerpt, edit, cardId }) {
   return (
     <CardView>
-      <div className="card_title">
+      <Link
+        to={`/plugins/${pluginId}/subsection/${cardId}`}
+        className="card_title"
+      >
         <h3>{title}</h3>
-      </div>
+      </Link>
       <div className="card_body">
         <p>{excerpt}</p>
       </div>

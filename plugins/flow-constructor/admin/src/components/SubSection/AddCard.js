@@ -14,18 +14,26 @@ export default function AddCard({
   handleToggle,
   updateSection,
   sectionId,
+  parentCardId,
 }) {
   const [loading, setLoading] = useState();
   const [tag, setTag] = useState("");
   const [val, setValue] = useState({
+    parent_card_id: "",
     section_id: "",
     title: "",
     tags: [],
+    cards: [],
+    use_cases: [],
   });
 
   useEffect(() => {
     setValue({ ...val, section_id: sectionId });
   }, [sectionId]);
+
+  useEffect(() => {
+    setValue({ ...val, parent_card_id: parentCardId });
+  }, [parentCardId]);
 
   const addTags = () => {
     if (tag === "") {
@@ -42,7 +50,6 @@ export default function AddCard({
 
   const createNewCard = async () => {
     setLoading(true);
-    console.log("values => ", val);
     try {
       await request("/cards", {
         method: "POST",
