@@ -1,5 +1,6 @@
 'use strict';
 const {create, find, count, update, remove, findAll} = require('./repo');
+const sectionRepo = require('../../section/services/repo');
 
 /**
  * Read the documentation (https://strapi.io/documentation/v3.x/concepts/services.html#core-services)
@@ -42,7 +43,7 @@ module.exports = {
       if (!section.cards) {
         section.cards = []
       }
-      section.cards.push(card.section_id);
+      section.cards.push(card);
       await strapi.services.section.update(card.section_id, section);
     }
     return card;
