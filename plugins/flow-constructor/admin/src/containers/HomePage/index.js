@@ -106,7 +106,7 @@ function HomePage() {
           onClick: (event) => handleDeleteClick(event, item),
         },
       ],
-      onClick: () => history.push(`/plugins/${pluginId}/section`),
+      onClick: () => history.push(`/plugins/${pluginId}/section/${item._id}`),
     };
   });
 
