@@ -54,7 +54,9 @@ function toJson(node) {
 function convertDbModel(data) {
   if (!data) return data;
   if (data.cards) {
-    data.cards = data.cards.map(card => card._id)
+    data.cards = data.cards
+      .filter(c => c !== null && c !== undefined)
+      .map(card => card._id)
   }
   delete data._id;
   return data

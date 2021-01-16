@@ -6,8 +6,8 @@ const schema = Joi.object({
   title: Joi.string().min(2).max(255),
   type: Joi.string().min(2).max(255),
   tags: Joi.array().items(Joi.string().min(2).max(12)),
-  cards: Joi.array().items(Joi.link('/')),
-  use_cases: Joi.array().items(Joi.link('#use_case')),
+  cards: Joi.array().items(Joi.link('/')).required(),
+  use_cases: Joi.array().items(Joi.link('#use_case')).required(),
 })
   .xor('parent_card_id', 'section_id')
   .required()

@@ -34,8 +34,9 @@ module.exports = {
     if (card.parent_card_id) {
       const parentCard = await find(card.parent_card_id);
       if (!parentCard.cards) {
-        parentCard.cards = [];
+        parentCard.cards = [ ];
       }
+      parentCard.cards.push(card);
       await update(card.parent_card_id, parentCard);
     } else if (card.section_id) {
       const section = await strapi.services.section.findOne(card.section_id);
