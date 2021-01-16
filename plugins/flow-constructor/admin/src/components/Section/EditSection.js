@@ -20,10 +20,11 @@ export default function EditSection({
   const [val, setValue] = useState({
     title: "",
     tags: [],
+    cards: [],
   });
 
   useEffect(() => {
-    setValue({ title: data.title, tags: data.tags });
+    setValue({ ...val, title: data.title, tags: data.tags, cards: data.cards });
   }, [data]);
 
   const addTag = () => {
