@@ -1,14 +1,18 @@
-import React, { memo, useState } from "react";
+import React, { memo, useState, useEffect } from "react";
 import { request } from "strapi-helper-plugin";
 import { DataCard, UseCaseCard } from "../../components/Card";
 import Background from "../../components/Card/Background";
 import Container from "../../components/Card/CardContainer";
 import Block from "../../components/Block";
 import { Header } from "@buffetjs/custom";
-import ModalView from "../../components/ModalView";
 import { Option, InputText } from "@buffetjs/core";
+import { useParams } from "react-router-dom";
+import CardSection from "../CardSection";
 
 function SectionPage() {
+  const params = useParams();
+  const [loading, setLoading] = useState();
+  const [section, setSection] = useState({});
   const [val, setValue] = useState("");
   const [tags, setTags] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -23,53 +27,45 @@ function SectionPage() {
     setTags([...tags, val]);
     setValue("");
   };
+
+  const getSectionDetail = async () => {
+    setLoading(true);
+    try {
+      const response = await request(`/sections/${params.id}`, {
+        method: "GET",
+      });
+      setLoading(false);
+      setSection(response);
+      console.log("getSectionDetail => ", response);
+    } catch (error) {
+      setLoading(false);
+      strapi.notification.error("An error occured");
+    }
+  };
+
+  useEffect(() => {
+    getSectionDetail();
+  }, []);
+
   return (
     <Background>
       <Container>
         <div className={"container-fluid"} style={{ padding: "18px 30px" }}>
           <Header
             title={{
-              label: "Section one",
+              label: section.title,
             }}
             content="Managing flow constructors easy with us!"
+            isLoading={loading}
           />
-          <div className="row">
-            <Block
-              title="SubSections"
-              description="Configure the Flow Constructor"
-              style={{ marginBottom: 24 }}
-              action={handleToggle}
-            >
-              <div className="row">
-                <div className="col-md-4">
-                  <DataCard
-                    category="Leasing"
-                    title="SubTopic"
-                    excerpt="Subsection description"
-                    edit={handleToggle}
-                  />
-                </div>
-                <div className="col-md-4">
-                  <DataCard
-                    category="Leasing"
-                    title="SubTopic"
-                    excerpt="Subsection description"
-                    edit={handleToggle}
-                  />
-                </div>
-                <div className="col-md-4">
-                  <DataCard
-                    category="Leasing"
-                    title="SubTopic"
-                    excerpt="Subsection description"
-                    edit={handleToggle}
-                  />
-                </div>
-              </div>
-            </Block>
-          </div>
+          {!loading && (
+            <CardSection
+              data={section}
+              updateSection={() => getSectionDetail()}
+            />
+          )}
 
-          <div className="row">
+          {/* <div className="row">
             <Block
               title="UseCases"
               description="Configure the Flow Constructor"
@@ -88,9 +84,9 @@ function SectionPage() {
                 </div>
               </div>
             </Block>
-          </div>
+          </div> */}
 
-          <div className="row">
+          {/* <div className="row">
             <Block title="Tags" description="" style={{ marginBottom: 24 }}>
               <div style={{ display: "flex", flexWrap: "wrap" }}>
                 <Option label="Tag" margin="0 10px 6px 0" />
@@ -114,16 +110,7 @@ function SectionPage() {
                 </div>
               </div>
             </Block>
-          </div>
-
-          <ModalView
-            isOpen={isOpen}
-            handleClose={handleClose}
-            handleToggle={handleToggle}
-            name={["Subsection"]}
-            richText
-            deleteAction
-          />
+          </div> */}
         </div>
       </Container>
     </Background>

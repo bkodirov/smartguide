@@ -8,7 +8,7 @@ import {
 } from "strapi-helper-plugin";
 import { Button, Flex, InputText, Label, Option } from "@buffetjs/core";
 
-export default function EditSection({
+export default function EditCard({
   isOpen,
   handleClose,
   handleToggle,
@@ -23,7 +23,7 @@ export default function EditSection({
   });
 
   useEffect(() => {
-    setValue({ title: data.title, tags: data.tags });
+    setValue({ ...val, title: data });
   }, [data]);
 
   const addTag = () => {
@@ -42,12 +42,29 @@ export default function EditSection({
   const sectionUpdate = async () => {
     setLoading(true);
     try {
-      await request(`/sections/${data._id}`, {
+      await request(`/cards/${data}`, {
         method: "PUT",
         body: val,
       });
       setLoading(false);
       strapi.notification.success("Updated");
+      handleClose();
+      updateSection();
+    } catch (error) {
+      setLoading(false);
+      strapi.notification.error("An error occured");
+      console.error(error);
+    }
+  };
+
+  const sectionDelete = async () => {
+    setLoading(true);
+    try {
+      const response = await request(`/sections/${data}`, {
+        method: "DELETE",
+      });
+      setLoading(false);
+      strapi.notification.success("Deleted");
       handleClose();
       updateSection();
     } catch (error) {
@@ -115,6 +132,9 @@ export default function EditSection({
           <Flex>
             <Button color="cancel" onClick={handleToggle} className="mr-3">
               Cancel
+            </Button>
+            <Button color="delete" onClick={sectionDelete}>
+              Delete
             </Button>
           </Flex>
           <Button color="success" onClick={sectionUpdate} isLoading={loading}>
