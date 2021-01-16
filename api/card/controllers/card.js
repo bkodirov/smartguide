@@ -26,15 +26,13 @@ module.exports = {
   },
 
   async create(ctx) {
-    // 1. Create a card
-    // 2. Update the parent Card or Section
     const { error } = validator.validateBody(ctx.request.body);
     if (error) {
       ctx.send(error.details[0], 400);
       return
     }
-    await strapi.services.card.create(ctx.request.body);
-    return ctx.response.created();
+    const createdCard = await strapi.services.card.create(ctx.request.body);
+    return ctx.response.created(createdCard);
   },
 
   async update(ctx) {
@@ -46,7 +44,7 @@ module.exports = {
 
     const updated = await strapi.services.card.update(id, ctx.request.body);
     if (updated) {
-      ctx.send({message: `Record with id:${id} updated`});
+      ctx.send(updated);
     } else {
       ctx.send({message: `Data with id:${id} not found`}, 404)
     }

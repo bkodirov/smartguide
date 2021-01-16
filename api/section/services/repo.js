@@ -44,11 +44,11 @@ async function remove(sectionId) {
 
 module.exports = {create, find, count, findAll, remove, update};
 
-function toJson(node) {
-  if (node && node._id) {
-    node._id = node._id.toString();
+function toJson(data) {
+  if (data && data._id) {
+    data._id = data._id.toString();
   }
-  return node;
+  return data;
 }
 
 function convertDbModel(data) {
