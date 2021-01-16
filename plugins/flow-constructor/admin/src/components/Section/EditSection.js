@@ -26,12 +26,17 @@ export default function EditSection({
     setValue({ title: data.title, tags: data.tags });
   }, [data]);
 
-  const addTags = () => {
+  const addTag = () => {
     if (tag === "") {
       return;
     }
     setValue({ ...val, tags: [...val.tags, tag] });
     setTag("");
+  };
+
+  const deleteTag = (id) => {
+    const filteredTags = val.tags.filter((tag) => tag !== id);
+    setValue({ ...val, tags: filteredTags });
   };
 
   const sectionUpdate = async () => {
@@ -75,8 +80,13 @@ export default function EditSection({
           <div className="col-md-12">
             <Label htmlFor="tag">Tags</Label>
             <div style={{ display: "flex", flexWrap: "wrap" }}>
-              {val.tags?.map((tag, index) => (
-                <Option key={index} label={tag} margin="0 10px 6px 0" />
+              {val.tags?.map((tag, id) => (
+                <Option
+                  key={id}
+                  label={tag}
+                  margin="0 10px 6px 0"
+                  onClick={() => deleteTag(tag)}
+                />
               ))}
             </div>
             <div className="row">
@@ -91,7 +101,7 @@ export default function EditSection({
                   value={tag}
                   onKeyPress={(event) => {
                     if (event.key === "Enter") {
-                      addTags();
+                      addTag();
                     }
                   }}
                 />
@@ -107,11 +117,7 @@ export default function EditSection({
               Cancel
             </Button>
           </Flex>
-          <Button
-            color="success"
-            onClick={sectionUpdate}
-            isLoading={loading}
-          >
+          <Button color="success" onClick={sectionUpdate} isLoading={loading}>
             Save
           </Button>
         </section>

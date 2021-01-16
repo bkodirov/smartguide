@@ -5,10 +5,7 @@ import Container from "../../components/Card/CardContainer";
 import { Header } from "@buffetjs/custom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { List } from "@buffetjs/custom";
-import {
-  faTrashAlt,
-  faPencilAlt,
-} from "@fortawesome/free-solid-svg-icons";
+import { faTrashAlt, faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 import ListRow from "../../components/ListRow";
 import { useHistory } from "react-router-dom";
 import pluginId from "../../pluginId";
@@ -60,6 +57,7 @@ function HomePage() {
       });
       setLoading(false);
       setSections(response);
+      console.log("getAllSections => ", response);
     } catch (error) {
       setLoading(false);
       strapi.notification.error("An error occured");
