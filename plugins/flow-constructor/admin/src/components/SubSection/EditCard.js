@@ -18,12 +18,22 @@ export default function EditCard({
   const [loading, setLoading] = useState();
   const [tag, setTag] = useState("");
   const [val, setValue] = useState({
+    section_id: "",
     title: "",
     tags: [],
+    cards: [],
+    use_cases: [],
   });
 
   useEffect(() => {
-    setValue({ ...val, title: data });
+    setValue({
+      ...val,
+      title: data.title,
+      tags: data.tags,
+      cards: data.cards,
+      use_cases: data.use_cases,
+      section_id: data._id,
+    });
   }, [data]);
 
   const addTag = () => {
@@ -42,7 +52,7 @@ export default function EditCard({
   const sectionUpdate = async () => {
     setLoading(true);
     try {
-      await request(`/cards/${data}`, {
+      await request(`/cards/${data._id}`, {
         method: "PUT",
         body: val,
       });
@@ -60,7 +70,7 @@ export default function EditCard({
   const sectionDelete = async () => {
     setLoading(true);
     try {
-      const response = await request(`/sections/${data}`, {
+      await request(`/cards/${data._id}`, {
         method: "DELETE",
       });
       setLoading(false);

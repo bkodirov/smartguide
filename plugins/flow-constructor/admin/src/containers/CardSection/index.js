@@ -33,11 +33,11 @@ export default function CardSection({ data, updateSection }) {
         action={handleAddToggle}
       >
         <div className="row">
-          {data.cards?.map((card) => (
-            <div key={card} className="col-md-4">
+          {data.cards?.map((card, index) => (
+            <div key={index} className="col-md-4">
               <DataCard
                 category="Leasing"
-                title={card}
+                title={card.title}
                 excerpt="Subsection description"
                 edit={() => handleEditToggle(card)}
               />

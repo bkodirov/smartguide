@@ -21,6 +21,8 @@ export default function AddCard({
     section_id: "",
     title: "",
     tags: [],
+    cards: [],
+    use_cases: [],
   });
 
   useEffect(() => {
@@ -42,7 +44,6 @@ export default function AddCard({
 
   const createNewCard = async () => {
     setLoading(true);
-    console.log("values => ", val);
     try {
       await request("/cards", {
         method: "POST",

@@ -19,6 +19,7 @@ export default function AddSection({
   const [val, setValue] = useState({
     title: "",
     tags: [],
+    cards: [],
   });
 
   const addTags = () => {

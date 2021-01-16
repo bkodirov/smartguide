@@ -13,20 +13,6 @@ function SectionPage() {
   const params = useParams();
   const [loading, setLoading] = useState();
   const [section, setSection] = useState({});
-  const [val, setValue] = useState("");
-  const [tags, setTags] = useState([]);
-  const [isOpen, setIsOpen] = useState(false);
-  const handleToggle = () => {
-    setIsOpen(!isOpen);
-  };
-  const handleClose = () => {
-    setIsOpen(false);
-  };
-  const addTags = (event) => {
-    event.preventDefault();
-    setTags([...tags, val]);
-    setValue("");
-  };
 
   const getSectionDetail = async () => {
     setLoading(true);
