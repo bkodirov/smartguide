@@ -14,10 +14,12 @@ export default function AddCard({
   handleToggle,
   updateSection,
   sectionId,
+  parentCardId,
 }) {
   const [loading, setLoading] = useState();
   const [tag, setTag] = useState("");
   const [val, setValue] = useState({
+    parent_card_id: "",
     section_id: "",
     title: "",
     tags: [],
@@ -28,6 +30,10 @@ export default function AddCard({
   useEffect(() => {
     setValue({ ...val, section_id: sectionId });
   }, [sectionId]);
+
+  useEffect(() => {
+    setValue({ ...val, parent_card_id: parentCardId });
+  }, [parentCardId]);
 
   const addTags = () => {
     if (tag === "") {
