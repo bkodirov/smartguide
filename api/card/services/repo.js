@@ -41,11 +41,11 @@ async function update(cardId, card) {
 
 async function remove(cardId) {
   if (!cardId) throw new Error('Card is required');
-  const result = await strapi.connections.mongo.connection.db.collection('cards').deleteOne({_id: ObjectID(cardId)});
-  if (!result.ops || result.ops.length === 0) {
+  const result = await strapi.connections.mongo.connection.db.collection('cards').findOneAndDelete({_id: ObjectID(cardId)});
+  if (!result.value) {
     throw Error(`No Object is returned for object creation. ${JSON.stringify(result, null, 2)}`);
   }
-  return toJson(result.ops[0]);
+  return toJson(result.value);
 }
 
 module.exports = {create, find, count, findAll, remove, update};

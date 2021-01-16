@@ -32,12 +32,12 @@ module.exports = {
   async create(cardToCreate) {
     const card = await create(cardToCreate);
     if (card.parent_card_id) {
-      const parentCard = await find(card.parent_card_id);
+      const parentCard = await this.findOne(card.parent_card_id);
       if (!parentCard.cards) {
         parentCard.cards = [ ];
       }
       parentCard.cards.push(card);
-      await update(card.parent_card_id, parentCard);
+      await this.update(card.parent_card_id, parentCard);
     } else if (card.section_id) {
       const section = await strapi.services.section.findOne(card.section_id);
       if (!section) throw Error(`Section with id=${card.section_id} not found`);
@@ -54,16 +54,31 @@ module.exports = {
     return update(cardId, card)
   },
 
-  async delete(cardId, recursive = false) {
+  async delete(cardId, recursive = true) {
+    const card = await find(cardId);
+    if (!card) return null;
     if (recursive) {
-      const card = await find(cardId);
-      await Promise.all(card.use_cases.map(useCaseId => strapi.services['use-case'].delete(useCaseId)));
-      await Promise.all(card.cards.map(cardId => this.delete(cardId, true)));
-      if (card.parent_card_id) {
-        await this.delete(card.parent_card_id, false);
-      } else if (card.section_id) {
-        await strapi.services.section.delete(card.section_id, false);
+      if (card.use_cases) {
+        await Promise.all(card.use_cases.map(useCaseId => strapi.services['use-case'].delete(useCaseId)));
       }
+      if (card.cards) {
+        await Promise.all(card.cards.map(cardId => this.delete(cardId, true)));
+      }
+    }
+    if (card.parent_card_id) {
+      // 1. Fetch the parent
+      const parent = await find(card.parent_card_id);
+      // 2. Remove itself from parent
+      parent.cards = parent.cards.filter(item => item !== cardId);
+      // 3. Update parent
+      await update(parent._id, parent);
+    } else if (card.section_id) {
+      // 1. Fetch the section
+      const section = await sectionRepo.find(card.section_id);
+      // 2. Remove itself from parent
+      section.cards = section.cards.filter(item => item !== cardId);
+      // 3. Update the section
+      await sectionRepo.update(section._id, section);
     }
     return remove(cardId);
   },

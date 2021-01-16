@@ -43,7 +43,7 @@ module.exports = {
   async delete(sectionId) {
     const section =  await find(sectionId);
     if (section.cards) {
-      section.cards.map(sectionId => strapi.services.card.findOne(sectionId))
+      await Promise.all(section.cards.map(cardId => strapi.services.card.delete(cardId)));
     }
     return remove(sectionId);
   },
