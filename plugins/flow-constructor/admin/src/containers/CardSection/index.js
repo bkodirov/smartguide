@@ -3,7 +3,7 @@ import { DataCard } from "../../components/Card";
 import Block from "../../components/Block";
 import { AddCard, EditCard } from "../../components/SubSection";
 
-export default function CardSection({ data, updateSection }) {
+export default function CardSection({ data, updateSection, recursive }) {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [currentSection, setCurrentSection] = useState({});
@@ -40,6 +40,7 @@ export default function CardSection({ data, updateSection }) {
                 title={card.title}
                 excerpt="Subsection description"
                 edit={() => handleEditToggle(card)}
+                cardId={card._id}
               />
             </div>
           ))}
@@ -52,6 +53,7 @@ export default function CardSection({ data, updateSection }) {
         handleToggle={handleAddToggle}
         updateSection={updateSection}
         sectionId={data._id}
+        parentCardId={data._id}
       />
       <EditCard
         isOpen={isEditModalOpen}

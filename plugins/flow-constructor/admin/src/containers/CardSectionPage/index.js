@@ -6,20 +6,20 @@ import { Header } from "@buffetjs/custom";
 import { useParams } from "react-router-dom";
 import CardSection from "../CardSection";
 
-function SectionPage() {
+function CardSectionPage() {
   const params = useParams();
   const [loading, setLoading] = useState();
   const [section, setSection] = useState({});
 
-  const getSectionDetail = async () => {
+  const getCardSectionDetail = async () => {
     setLoading(true);
     try {
-      const response = await request(`/sections/${params.id}`, {
+      const response = await request(`/cards/${params.id}`, {
         method: "GET",
       });
       setLoading(false);
       setSection(response);
-      console.log("getSectionDetail => ", response);
+      console.log("getCardSectionDetail => ", response);
     } catch (error) {
       setLoading(false);
       strapi.notification.error("An error occured");
@@ -27,7 +27,7 @@ function SectionPage() {
   };
 
   useEffect(() => {
-    getSectionDetail();
+    getCardSectionDetail();
   }, []);
 
   return (
@@ -45,6 +45,7 @@ function SectionPage() {
             <CardSection
               data={section}
               updateSection={() => getSectionDetail()}
+              recursive
             />
           )}
 
@@ -100,4 +101,4 @@ function SectionPage() {
   );
 }
 
-export default memo(SectionPage);
+export default memo(CardSectionPage);
