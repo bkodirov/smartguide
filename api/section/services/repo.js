@@ -33,13 +33,19 @@ async function update(sectionId, section) {
   if (!section) throw new Error('Section is required');
   convertDbModel(section);
   const result = await strapi.connections.mongo.connection.db.collection('sections').replaceOne({ _id: ObjectID(sectionId) }, section);
-  return result.result.ok === 1 && result.result.n > 0;
+  if (!result.ops || result.ops.length === 0) {
+    throw Error(`No Object is returned for object creation. ${JSON.stringify(result, null, 2)}`);
+  }
+  return toJson(result.ops[0]);
 }
 
 async function remove(sectionId) {
   if (!sectionId) throw new Error('Section is required');
-  const deletionResult = await strapi.connections.mongo.connection.db.collection('sections').deleteOne({_id: ObjectID(sectionId)});
-  return deletionResult.deletedCount === 1;
+  const result = await strapi.connections.mongo.connection.db.collection('sections').deleteOne({_id: ObjectID(sectionId)});
+  if (!result.ops || result.ops.length === 0) {
+    throw Error(`No Object is returned for object creation. ${JSON.stringify(result, null, 2)}`);
+  }
+  return toJson(result.ops[0]);
 }
 
 module.exports = {create, find, count, findAll, remove, update};

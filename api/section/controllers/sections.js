@@ -48,7 +48,7 @@ module.exports = {
 
     const updated = await strapi.services.section.update(id, ctx.request.body);
     if (updated) {
-      ctx.send({message: `Record with id:${id} updated`});
+      ctx.send(updated);
     } else {
       ctx.send({message: `Data with id:${id} not found`}, 404)
     }
@@ -61,7 +61,7 @@ module.exports = {
 
     const deleteEntity = await strapi.services.section.delete(id);
     if (deleteEntity) {
-      ctx.deleted();
+      ctx.deleted(deleteEntity);
     } else {
       ctx.send({message: `Data with id:${id} not found`}, 404)
     }

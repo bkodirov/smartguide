@@ -60,7 +60,7 @@ module.exports = {
 
     const deleteEntity = await strapi.services.card.delete(id);
     if (deleteEntity) {
-      ctx.deleted();
+      ctx.deleted(deleteEntity);
     } else {
       ctx.send({message: `Data with id:${id} not found`}, 404)
     }
