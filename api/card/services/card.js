@@ -25,27 +25,30 @@ module.exports = {
 
   async findOne(id, recursive = true) {
     const card = await find(id);
+    if (!card) throw Error(`No card found with id ${id}`);
     if (!recursive) return card;
     return populateCard(card)
   },
 
   async create(cardToCreate) {
-    const card = await create(cardToCreate);
-    if (card.parent_card_id) {
-      const parentCard = await this.findOne(card.parent_card_id);
+    let card;
+    if (cardToCreate.parent_card_id) {
+      const parentCard = await this.findOne(cardToCreate.parent_card_id);
       if (!parentCard.cards) {
         parentCard.cards = [ ];
       }
+      card = await create(cardToCreate);
       parentCard.cards.push(card);
-      await this.update(card.parent_card_id, parentCard);
-    } else if (card.section_id) {
-      const section = await strapi.services.section.findOne(card.section_id);
-      if (!section) throw Error(`Section with id=${card.section_id} not found`);
+      await this.update(cardToCreate.parent_card_id, parentCard);
+    } else if (cardToCreate.section_id) {
+      const section = await strapi.services.section.findOne(cardToCreate.section_id);
+      if (!section) throw Error(`Section with id=${cardToCreate.section_id} not found`);
       if (!section.cards) {
         section.cards = []
       }
+      card = await create(cardToCreate);
       section.cards.push(card);
-      await strapi.services.section.update(card.section_id, section);
+      await strapi.services.section.update(cardToCreate.section_id, section);
     }
     return card;
   },

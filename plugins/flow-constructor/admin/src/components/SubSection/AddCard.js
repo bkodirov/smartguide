@@ -19,8 +19,6 @@ export default function AddCard({
   const [loading, setLoading] = useState();
   const [tag, setTag] = useState("");
   const [val, setValue] = useState({
-    parent_card_id: "",
-    section_id: "",
     title: "",
     tags: [],
     cards: [],

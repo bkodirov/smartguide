@@ -31,8 +31,12 @@ module.exports = {
       ctx.send(error.details[0], 400);
       return
     }
-    const createdCard = await strapi.services.card.create(ctx.request.body);
-    return ctx.response.created(createdCard);
+    try {
+      const createdCard = await strapi.services.card.create(ctx.request.body);
+      return ctx.response.created(createdCard);
+    } catch (e) {
+      return ctx.response.send({message: JSON.stringify(e.toString(), null, 2)}, 400);
+    }
   },
 
   async update(ctx) {
@@ -42,11 +46,15 @@ module.exports = {
     if (bodyValidation.error) return ctx.send(bodyValidation.error.details[0], 400);
     if (idValidation.error) return ctx.send(idValidation.error.details[0], 400);
 
-    const updated = await strapi.services.card.update(id, ctx.request.body);
-    if (updated) {
-      ctx.send(updated);
-    } else {
-      ctx.send({message: `Data with id:${id} not found`}, 404)
+    try {
+      const updated = await strapi.services.card.update(id, ctx.request.body);
+      if (updated) {
+        ctx.send(updated);
+      } else {
+        ctx.send({message: `Data with id:${id} not found`}, 404)
+      }
+    } catch (e) {
+      return ctx.response.send({message: JSON.stringify(e.toString(), null, 2)}, 400);
     }
   },
 
@@ -54,12 +62,15 @@ module.exports = {
     const {id} = ctx.params;
     const idValidation = validator.validateId(id);
     if (idValidation.error) return ctx.send(idValidation.error.details[0], 400);
-
-    const deleteEntity = await strapi.services.card.delete(id);
-    if (deleteEntity) {
-      ctx.deleted(deleteEntity);
-    } else {
-      ctx.send({message: `Data with id:${id} not found`}, 404)
+    try {
+      const deleteEntity = await strapi.services.card.delete(id);
+      if (deleteEntity) {
+        ctx.deleted(deleteEntity);
+      } else {
+        ctx.send({message: `Data with id:${id} not found`}, 404)
+      }
+    } catch (e) {
+      return ctx.response.send({message: JSON.stringify(e.toString(), null, 2)}, 400);
     }
   },
 };
