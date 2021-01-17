@@ -31,8 +31,12 @@ module.exports = {
       ctx.send(error.details[0], 400);
       return
     }
-    await strapi.services['use-case'].create(ctx.request.body);
-    return ctx.response.created();
+    try {
+      await strapi.services['use-case'].create(ctx.request.body);
+      return ctx.response.created();
+    } catch (e) {
+      return ctx.response.send({message: e.toString()}, 400);
+    }
   },
 
   async update(ctx) {
@@ -42,11 +46,15 @@ module.exports = {
     if (bodyValidation.error) return ctx.send(bodyValidation.error.details[0], 400);
     if (idValidation.error) return ctx.send(idValidation.error.details[0], 400);
 
-    const updated = await strapi.services['use-case'].update(id, ctx.request.body);
-    if (updated) {
-      ctx.send({message: `Record with id:${id} updated`});
-    } else {
-      ctx.send({message: `Data with id:${id} not found`}, 404)
+    try {
+      const updated = await strapi.services['use-case'].update(id, ctx.request.body);
+      if (updated) {
+        ctx.send({message: `Record with id:${id} updated`});
+      } else {
+        ctx.send({message: `Data with id:${id} not found`}, 404)
+      }
+    } catch (e) {
+      return ctx.response.send({message: e.toString()}, 400);
     }
   },
 
@@ -55,11 +63,15 @@ module.exports = {
     const idValidation = validator.validateId(id);
     if (idValidation.error) return ctx.send(idValidation.error.details[0], 400);
 
-    const deleteEntity = await strapi.services['use-case'].delete(id);
-    if (deleteEntity) {
-      ctx.deleted();
-    } else {
-      ctx.send({message: `Data with id:${id} not found`}, 404)
+    try {
+      const deleteEntity = await strapi.services['use-case'].delete(id);
+      if (deleteEntity) {
+        ctx.deleted();
+      } else {
+        ctx.send({message: `Data with id:${id} not found`}, 404)
+      }
+    } catch (e) {
+      return ctx.response.send({message: e.toString()}, 400);
     }
   },
 };

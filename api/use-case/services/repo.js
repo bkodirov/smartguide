@@ -2,6 +2,7 @@ const {ObjectID} = require ('mongodb');
 
 async function create(data) {
   if (!data) throw new Error('Data is required');
+  data = convertDbModel(data);
   const result =  await strapi.connections.mongo.connection.db.collection('use_cases').insertOne(data);
   if (!result.ops || result.ops.length === 0) {
     throw Error(`No Object is returned for object creation. ${JSON.stringify(result, null, 2)}`);
@@ -48,4 +49,15 @@ function toJson(useCase) {
     useCase._id = useCase._id.toString();
   }
   return useCase;
+}
+
+function convertDbModel(useCase) {
+  if (!useCase) return useCase;
+  if (useCase.head_node) {
+    useCase.head_node = useCase.head_node._id
+  } else {
+    useCase.nodes = useCase.nodes.map(node => node._id)
+  }
+  delete useCase._id;
+  return useCase
 }

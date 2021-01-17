@@ -45,8 +45,16 @@ module.exports = {
   },
 
   async create(useCase) {
-    useCase = convertDbModel(useCase);
-    return create(useCase);
+    // Fetch the parent Card
+    const parentCard = await strapi.services.card.findOne(useCase.parent_card_id);
+    //Create a use case
+    const createdUseCase = await create(useCase);
+    if (parentCard.cards) {
+      parentCard.cards = [];
+    }
+    parentCard.cards.push(createdUseCase);
+    const updatedParentCard = await strapi.services.card.update(parentCard._id, parentCard);
+    return createdUseCase;
   },
 
   async update(useCaseId, useCase) {
@@ -55,8 +63,11 @@ module.exports = {
   },
 
   async delete(useCaseId) {
-    // TODO Update Card and delete the UseCase
     const useCase = await find(useCaseId);
+    // TODO Update Card and delete the UseCase
+    const parentCard = await strapi.services.card.findOne(useCase.parent_card_id);
+    parentCard.use_cases.filter(useCase)
+
     if (!useCase) return null;
     if (useCase.head_node) {
       await strapi.services.node.delete(useCase.head_node, false)

@@ -31,6 +31,7 @@ card: {
 ### Use Case
 ```
 use_case: {
+    parent_card_id: "asdasd",
     title: "1234",
     "tags": [],
     head_node: #node,
