@@ -32,8 +32,8 @@ module.exports = {
       return
     }
     try {
-      await strapi.services['use-case'].create(ctx.request.body);
-      return ctx.response.created();
+      const useCase = await strapi.services['use-case'].create(ctx.request.body);
+      return ctx.response.created(useCase);
     } catch (e) {
       return ctx.response.send({message: e.toString()}, 400);
     }

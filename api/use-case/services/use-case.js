@@ -49,10 +49,10 @@ module.exports = {
     const parentCard = await strapi.services.card.findOne(useCase.parent_card_id);
     //Create a use case
     const createdUseCase = await create(useCase);
-    if (parentCard.cards) {
-      parentCard.cards = [];
+    if (!parentCard.use_cases) {
+      parentCard.use_cases = [];
     }
-    parentCard.cards.push(createdUseCase);
+    parentCard.use_cases.push(createdUseCase);
     const updatedParentCard = await strapi.services.card.update(parentCard._id, parentCard);
     return createdUseCase;
   },
@@ -62,11 +62,13 @@ module.exports = {
     return update(useCaseId, useCase)
   },
 
-  async delete(useCaseId) {
+  async delete(useCaseId, updateParent = true) {
     const useCase = await find(useCaseId);
-    // TODO Update Card and delete the UseCase
-    const parentCard = await strapi.services.card.findOne(useCase.parent_card_id);
-    parentCard.use_cases.filter(useCase)
+    if (updateParent){
+      const parentCard = await strapi.services.card.findOne(useCase.parent_card_id);
+      parentCard.use_cases = parentCard.use_cases.filter(uc => uc._id !== useCaseId);
+      await strapi.services.card.update(useCase.parent_card_id, parentCard);
+    }
 
     if (!useCase) return null;
     if (useCase.head_node) {

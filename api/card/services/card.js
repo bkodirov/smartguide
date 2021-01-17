@@ -9,7 +9,7 @@ const sectionRepo = require('../../section/services/repo');
 
 async function populateCard(dbCard) {
   dbCard.cards = await Promise.all(dbCard.cards.map(cardId => find(cardId)));
-  dbCard.use_cases = await Promise.all(dbCard.use_cases.map(useCaseId => strapi.services["use-case"].find(useCaseId, false)));
+  dbCard.use_cases = await Promise.all(dbCard.use_cases.map(useCaseId => strapi.services["use-case"].findOne(useCaseId, false)));
   return dbCard
 }
 
@@ -62,7 +62,7 @@ module.exports = {
     if (!card) return null;
     if (recursive) {
       if (card.use_cases) {
-        await Promise.all(card.use_cases.map(useCaseId => strapi.services['use-case'].delete(useCaseId)));
+        await Promise.all(card.use_cases.map(useCaseId => strapi.services['use-case'].delete(useCaseId, false)));
       }
       if (card.cards) {
         await Promise.all(card.cards.map(cardId => this.delete(cardId, true, false)));
