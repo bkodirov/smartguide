@@ -57,7 +57,7 @@ module.exports = {
     return update(cardId, card)
   },
 
-  async delete(cardId, recursive = true) {
+  async delete(cardId, recursive = true, updateParent = true) {
     const card = await find(cardId);
     if (!card) return null;
     if (recursive) {
@@ -65,23 +65,25 @@ module.exports = {
         await Promise.all(card.use_cases.map(useCaseId => strapi.services['use-case'].delete(useCaseId)));
       }
       if (card.cards) {
-        await Promise.all(card.cards.map(cardId => this.delete(cardId, true)));
+        await Promise.all(card.cards.map(cardId => this.delete(cardId, true, false)));
       }
     }
-    if (card.parent_card_id) {
-      // 1. Fetch the parent
-      const parent = await find(card.parent_card_id);
-      // 2. Remove itself from parent
-      parent.cards = parent.cards.filter(item => item !== cardId);
-      // 3. Update parent
-      await update(parent._id, parent);
-    } else if (card.section_id) {
-      // 1. Fetch the section
-      const section = await sectionRepo.find(card.section_id);
-      // 2. Remove itself from parent
-      section.cards = section.cards.filter(item => item !== cardId);
-      // 3. Update the section
-      await sectionRepo.update(section._id, section);
+    if (updateParent) {
+      if (card.parent_card_id) {
+        // 1. Fetch the parent
+        const parent = await this.findOne(card.parent_card_id);
+        // 2. Remove itself from parent
+        parent.cards = parent.cards.filter(item => item._id !== cardId);
+        // 3. Update parent
+        await update(parent._id, parent);
+      } else if (card.section_id) {
+        // 1. Fetch the section
+        const section = await strapi.services.section.findOne(card.section_id);
+        // 2. Remove itself from parent
+        section.cards = section.cards.filter(item => item._id !== cardId);
+        // 3. Update the section
+        await sectionRepo.update(section._id, section);
+      }
     }
     return remove(cardId);
   },
