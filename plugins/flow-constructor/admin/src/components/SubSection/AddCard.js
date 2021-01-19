@@ -23,7 +23,7 @@ export default function AddCard(
   const [tag, setTag] = useState("");
   const [val, setValue] = useState({
     title: "",
-    tags: [],
+    tags: tags,
     cards: [],
     use_cases: [],
   });
