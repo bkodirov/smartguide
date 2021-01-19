@@ -5,6 +5,7 @@ import Container from "../../components/Card/CardContainer";
 import { Header } from "@buffetjs/custom";
 import { useParams } from "react-router-dom";
 import CardSection from "../CardSection";
+import UseCaseSection from "../UseCaseSection";
 
 function CardSectionPage() {
   const params = useParams();
@@ -43,32 +44,18 @@ function CardSectionPage() {
           />
           {!loading && (
             <CardSection
-              data={ {parent_card: card} }
-              updateSection={() => getSectionDetail()}
+              data={{ parent_card: card }}
+              updateSection={() => getCardSectionDetail()}
               recursive
             />
           )}
 
-          {/* <div className="row">
-            <Block
-              title="UseCases"
-              description="Configure the Flow Constructor"
-              style={{ marginBottom: 16 }}
-              action={handleToggle}
-            >
-              <div className="row">
-                <div className="col-md-3">
-                  <UseCaseCard
-                    title="Lease classification use card"
-                    edit={handleToggle}
-                  />
-                </div>
-                <div className="col-md-3">
-                  <UseCaseCard title="UseCase name" edit={handleToggle} />
-                </div>
-              </div>
-            </Block>
-          </div> */}
+          {!loading && (
+            <UseCaseSection
+              data={{ parent_card: card }}
+              updateSection={() => getCardSectionDetail()}
+            />
+          )}
 
           {/* <div className="row">
             <Block title="Tags" description="" style={{ marginBottom: 24 }}>

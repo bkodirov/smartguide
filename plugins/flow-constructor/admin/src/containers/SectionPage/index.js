@@ -49,27 +49,6 @@ function SectionPage() {
           )}
 
           {/* <div className="row">
-            <Block
-              title="UseCases"
-              description="Configure the Flow Constructor"
-              style={{ marginBottom: 16 }}
-              action={handleToggle}
-            >
-              <div className="row">
-                <div className="col-md-3">
-                  <UseCaseCard
-                    title="Lease classification use section"
-                    edit={handleToggle}
-                  />
-                </div>
-                <div className="col-md-3">
-                  <UseCaseCard title="UseCase name" edit={handleToggle} />
-                </div>
-              </div>
-            </Block>
-          </div> */}
-
-          {/* <div className="row">
             <Block title="Tags" description="" style={{ marginBottom: 24 }}>
               <div style={{ display: "flex", flexWrap: "wrap" }}>
                 <Option label="Tag" margin="0 10px 6px 0" />
