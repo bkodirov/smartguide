@@ -9,17 +9,47 @@
     "timestamps": true
   },
   "attributes": {
-    "title": {
-      "type": "string"
-    },
-    "deeplink": {
-      "type": "string",
-      "private": false,
+    "text": {
+      "type": "richtext",
       "required": true,
-      "unique": true
+      "minLength": 1
     },
-    "full_text": {
-      "type": "richtext"
+    "spec": {
+      "type": "string",
+      "required": true,
+      "minLength": 2
+    },
+    "topic": {
+      "type": "integer",
+      "required": true,
+      "max": 9999,
+      "min": 0
+    },
+    "subtopic": {
+      "type": "integer",
+      "required": true,
+      "min": 0,
+      "max": 99
+    },
+    "section": {
+      "type": "integer",
+      "required": true,
+      "min": 0,
+      "max": 99
+    },
+    "paragraph": {
+      "type": "integer",
+      "required": true,
+      "max": 9999,
+      "min": 0
+    },
+    "common_topic": {
+      "type": "string",
+      "required": false
+    },
+    "common_topic_child": {
+      "type": "string",
+      "required": false
     }
   }
 }

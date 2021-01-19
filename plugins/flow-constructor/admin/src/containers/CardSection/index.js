@@ -24,16 +24,18 @@ export default function CardSection({ data, updateSection, recursive }) {
     setIsEditModalOpen(false);
   };
 
+  const cards = data.parent_section ? data.parent_section?.cards : data.parent_card?.cards;
+  const tags = data.parent_section?.tags || data.parent_card?.tags;
   return (
     <div className="row">
       <Block
-        title="SubSections"
+        title={ data.parent_section ? data.parent_section?.title : data.parent_card?.title }
         description="Configure the Flow Constructor"
         style={{ marginBottom: 24 }}
         action={handleAddToggle}
       >
         <div className="row">
-          {data.cards?.map((card, index) => (
+          {cards?.map((card, index) => (
             <div key={index} className="col-md-4">
               <DataCard
                 category="Leasing"
@@ -46,14 +48,14 @@ export default function CardSection({ data, updateSection, recursive }) {
           ))}
         </div>
       </Block>
-
       <AddCard
         isOpen={isAddModalOpen}
         handleClose={handleClose}
         handleToggle={handleAddToggle}
         updateSection={updateSection}
-        sectionId={data._id}
-        parentCardId={data._id}
+        sectionId={data.parent_section?._id}
+        parentCardId={data.parent_card?._id}
+        tags={tags}
       />
       <EditCard
         isOpen={isEditModalOpen}

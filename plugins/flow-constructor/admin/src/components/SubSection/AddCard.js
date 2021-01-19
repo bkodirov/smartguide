@@ -8,14 +8,17 @@ import {
 } from "strapi-helper-plugin";
 import { Button, Flex, InputText, Label, Option } from "@buffetjs/core";
 
-export default function AddCard({
-  isOpen,
-  handleClose,
-  handleToggle,
-  updateSection,
-  sectionId,
-  parentCardId,
-}) {
+export default function AddCard(
+  {
+    isOpen,
+    handleClose,
+    handleToggle,
+    updateSection,
+    sectionId,
+    parentCardId,
+    tags
+  }
+) {
   const [loading, setLoading] = useState();
   const [tag, setTag] = useState("");
   const [val, setValue] = useState({

@@ -9,7 +9,7 @@ import CardSection from "../CardSection";
 function CardSectionPage() {
   const params = useParams();
   const [loading, setLoading] = useState();
-  const [section, setSection] = useState({});
+  const [card, setSection] = useState({});
 
   const getCardSectionDetail = async () => {
     setLoading(true);
@@ -36,14 +36,14 @@ function CardSectionPage() {
         <div className={"container-fluid"} style={{ padding: "18px 30px" }}>
           <Header
             title={{
-              label: section.title,
+              label: card.title,
             }}
             content="Managing flow constructors easy with us!"
             isLoading={loading}
           />
           {!loading && (
             <CardSection
-              data={section}
+              data={ {parent_card: card} }
               updateSection={() => getSectionDetail()}
               recursive
             />
@@ -59,7 +59,7 @@ function CardSectionPage() {
               <div className="row">
                 <div className="col-md-3">
                   <UseCaseCard
-                    title="Lease classification use section"
+                    title="Lease classification use card"
                     edit={handleToggle}
                   />
                 </div>

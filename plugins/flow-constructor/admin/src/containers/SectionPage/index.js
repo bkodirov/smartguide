@@ -43,7 +43,7 @@ function SectionPage() {
           />
           {!loading && (
             <CardSection
-              data={section}
+              data={{parent_section: section}}
               updateSection={() => getSectionDetail()}
             />
           )}
