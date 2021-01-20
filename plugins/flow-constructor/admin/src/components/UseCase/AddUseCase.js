@@ -19,14 +19,15 @@ export default function AddUseCase({
   const [loading, setLoading] = useState();
   const [tag, setTag] = useState("");
   const [val, setValue] = useState({
+    parent_card_id: "",
     title: "",
-    tags: tags,
+    tags: [],
     nodes: [],
   });
 
   useEffect(() => {
-    setValue({ ...val, parent_card_id: parentCardId });
-  }, [parentCardId]);
+    setValue({ ...val, parent_card_id: parentCardId, tags });
+  }, [parentCardId, tags]);
 
   const addTags = () => {
     if (tag === "") {

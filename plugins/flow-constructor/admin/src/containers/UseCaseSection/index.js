@@ -60,6 +60,7 @@ export default function UseCaseSection({ data, updateSection }) {
         handleToggle={handleEditToggle}
         updateSection={updateSection}
         data={currentUseCase}
+        parentCardId={data.parent_card?._id}
       />
     </div>
   );

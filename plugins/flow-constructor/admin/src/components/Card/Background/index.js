@@ -1,7 +1,8 @@
-import styled, {keyframes} from 'styled-components';
+import styled, { keyframes } from "styled-components";
 
 export default styled.div`
-  background: #F3F3F3;
+  min-height: calc(100vh - 60px);
+  background: #f3f3f3;
   padding: 20px;
   font-family: "Open Sans", sans-serif;
 `;

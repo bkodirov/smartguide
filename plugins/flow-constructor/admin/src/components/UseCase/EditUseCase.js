@@ -14,10 +14,12 @@ export default function EditUseCase({
   handleToggle,
   updateSection,
   data,
+  parentCardId,
 }) {
   const [loading, setLoading] = useState();
   const [tag, setTag] = useState("");
   const [val, setValue] = useState({
+    parent_card_id: "",
     title: "",
     tags: [],
     nodes: [],
@@ -28,8 +30,9 @@ export default function EditUseCase({
       ...val,
       title: data.title,
       tags: data.tags,
+      parent_card_id: parentCardId,
     });
-  }, [data]);
+  }, [data, parentCardId]);
 
   const addTag = () => {
     if (tag === "") {

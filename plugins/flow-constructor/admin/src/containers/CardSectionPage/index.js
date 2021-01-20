@@ -12,7 +12,7 @@ function CardSectionPage() {
   const [loading, setLoading] = useState();
   const [card, setSection] = useState({});
 
-  const getCardSectionDetail = async () => {
+  const getCardDetail = async () => {
     setLoading(true);
     try {
       const response = await request(`/cards/${params.id}`, {
@@ -20,7 +20,7 @@ function CardSectionPage() {
       });
       setLoading(false);
       setSection(response);
-      console.log("getCardSectionDetail => ", response);
+      console.log("getCardDetail => ", response);
     } catch (error) {
       setLoading(false);
       strapi.notification.error("An error occured");
@@ -28,8 +28,8 @@ function CardSectionPage() {
   };
 
   useEffect(() => {
-    getCardSectionDetail();
-  }, []);
+    getCardDetail();
+  }, [params]);
 
   return (
     <Background>
@@ -45,7 +45,7 @@ function CardSectionPage() {
           {!loading && (
             <CardSection
               data={{ parent_card: card }}
-              updateSection={() => getCardSectionDetail()}
+              updateSection={() => getCardDetail()}
               recursive
             />
           )}
@@ -53,7 +53,7 @@ function CardSectionPage() {
           {!loading && (
             <UseCaseSection
               data={{ parent_card: card }}
-              updateSection={() => getCardSectionDetail()}
+              updateSection={() => getCardDetail()}
             />
           )}
 

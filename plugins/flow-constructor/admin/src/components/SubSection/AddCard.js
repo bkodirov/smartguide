@@ -8,33 +8,32 @@ import {
 } from "strapi-helper-plugin";
 import { Button, Flex, InputText, Label, Option } from "@buffetjs/core";
 
-export default function AddCard(
-  {
-    isOpen,
-    handleClose,
-    handleToggle,
-    updateSection,
-    sectionId,
-    parentCardId,
-    tags
-  }
-) {
+export default function AddCard({
+  isOpen,
+  handleClose,
+  handleToggle,
+  updateSection,
+  sectionId,
+  parentCardId,
+  tags,
+}) {
   const [loading, setLoading] = useState();
   const [tag, setTag] = useState("");
   const [val, setValue] = useState({
     title: "",
-    tags: tags,
+    tags: [],
     cards: [],
     use_cases: [],
   });
 
   useEffect(() => {
-    setValue({ ...val, section_id: sectionId });
-  }, [sectionId]);
-
-  useEffect(() => {
-    setValue({ ...val, parent_card_id: parentCardId });
-  }, [parentCardId]);
+    setValue({
+      ...val,
+      section_id: sectionId,
+      parent_card_id: parentCardId,
+      tags,
+    });
+  }, [sectionId, tags, parentCardId]);
 
   const addTags = () => {
     if (tag === "") {
