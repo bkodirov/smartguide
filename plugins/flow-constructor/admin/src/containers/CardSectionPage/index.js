@@ -5,13 +5,14 @@ import Container from "../../components/Card/CardContainer";
 import { Header } from "@buffetjs/custom";
 import { useParams } from "react-router-dom";
 import CardSection from "../CardSection";
+import UseCaseSection from "../UseCaseSection";
 
 function CardSectionPage() {
   const params = useParams();
   const [loading, setLoading] = useState();
   const [card, setSection] = useState({});
 
-  const getCardSectionDetail = async () => {
+  const getCardDetail = async () => {
     setLoading(true);
     try {
       const response = await request(`/cards/${params.id}`, {
@@ -19,7 +20,7 @@ function CardSectionPage() {
       });
       setLoading(false);
       setSection(response);
-      console.log("getCardSectionDetail => ", response);
+      console.log("getCardDetail => ", response);
     } catch (error) {
       setLoading(false);
       strapi.notification.error("An error occured");
@@ -27,8 +28,8 @@ function CardSectionPage() {
   };
 
   useEffect(() => {
-    getCardSectionDetail();
-  }, []);
+    getCardDetail();
+  }, [params]);
 
   return (
     <Background>
@@ -43,32 +44,18 @@ function CardSectionPage() {
           />
           {!loading && (
             <CardSection
-              data={ {parent_card: card} }
-              updateSection={() => getSectionDetail()}
+              data={{ parent_card: card }}
+              updateSection={() => getCardDetail()}
               recursive
             />
           )}
 
-          {/* <div className="row">
-            <Block
-              title="UseCases"
-              description="Configure the Flow Constructor"
-              style={{ marginBottom: 16 }}
-              action={handleToggle}
-            >
-              <div className="row">
-                <div className="col-md-3">
-                  <UseCaseCard
-                    title="Lease classification use card"
-                    edit={handleToggle}
-                  />
-                </div>
-                <div className="col-md-3">
-                  <UseCaseCard title="UseCase name" edit={handleToggle} />
-                </div>
-              </div>
-            </Block>
-          </div> */}
+          {!loading && (
+            <UseCaseSection
+              data={{ parent_card: card }}
+              updateSection={() => getCardDetail()}
+            />
+          )}
 
           {/* <div className="row">
             <Block title="Tags" description="" style={{ marginBottom: 24 }}>

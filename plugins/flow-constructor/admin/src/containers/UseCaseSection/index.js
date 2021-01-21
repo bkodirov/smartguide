@@ -1,19 +1,19 @@
 import React, { useState } from "react";
-import { DataCard } from "../../components/Card";
+import { UseCaseCard } from "../../components/Card";
 import Block from "../../components/Block";
-import { AddCard, EditCard } from "../../components/SubSection";
+import { AddUseCase, EditUseCase } from "../../components/UseCase";
 
-export default function CardSection({ data, updateSection, recursive }) {
+export default function UseCaseSection({ data, updateSection }) {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [currentCard, setCurrentCard] = useState({});
+  const [currentUseCase, setCurrentUseCase] = useState({});
 
   const handleEditToggle = (data) => {
     setIsEditModalOpen(!isEditModalOpen);
     if (data) {
-      setCurrentCard(data);
+      setCurrentUseCase(data);
     } else {
-      setCurrentCard({});
+      setCurrentUseCase({});
     }
   };
   const handleAddToggle = () => {
@@ -24,23 +24,21 @@ export default function CardSection({ data, updateSection, recursive }) {
     setIsEditModalOpen(false);
   };
 
-  const cards = data.parent_section ? data.parent_section?.cards : data.parent_card?.cards;
-  const tags = data.parent_section?.tags || data.parent_card?.tags;
+  const cards = data.parent_card?.use_cases;
+  const tags = data.parent_card?.tags;
   return (
     <div className="row">
       <Block
-        title={ data.parent_section ? data.parent_section?.title : data.parent_card?.title }
+        title="UseCases"
         description="Configure the Flow Constructor"
-        style={{ marginBottom: 24 }}
+        style={{ marginBottom: 16 }}
         action={handleAddToggle}
       >
         <div className="row">
-          {cards?.map((card, index) => (
-            <div key={index} className="col-md-4">
-              <DataCard
-                category="Leasing"
+          {cards?.map((card) => (
+            <div key={card._id} className="col-md-3">
+              <UseCaseCard
                 title={card.title}
-                excerpt="Subsection description"
                 edit={() => handleEditToggle(card)}
                 cardId={card._id}
               />
@@ -48,21 +46,21 @@ export default function CardSection({ data, updateSection, recursive }) {
           ))}
         </div>
       </Block>
-      <AddCard
+      <AddUseCase
         isOpen={isAddModalOpen}
         handleClose={handleClose}
         handleToggle={handleAddToggle}
         updateSection={updateSection}
-        sectionId={data.parent_section?._id}
         parentCardId={data.parent_card?._id}
         tags={tags}
       />
-      <EditCard
+      <EditUseCase
         isOpen={isEditModalOpen}
         handleClose={handleClose}
         handleToggle={handleEditToggle}
         updateSection={updateSection}
-        data={currentCard}
+        data={currentUseCase}
+        parentCardId={data.parent_card?._id}
       />
     </div>
   );

@@ -45,12 +45,12 @@ function DataCard({ title, excerpt, edit, cardId }) {
   );
 }
 
-function UseCaseCard({ title, edit }) {
+function UseCaseCard({ title, edit, cardId }) {
   return (
     <UseCaseCardView>
-      <div className="card_title">
+      <Link to={`/plugins/${pluginId}/node/${cardId}`} className="card_title">
         <h3>{title}</h3>
-      </div>
+      </Link>
       <div className="card_footer">
         <Button color="primary" label="Edit" onClick={edit} />
       </div>

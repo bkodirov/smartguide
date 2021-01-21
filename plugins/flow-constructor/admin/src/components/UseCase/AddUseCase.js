@@ -8,32 +8,26 @@ import {
 } from "strapi-helper-plugin";
 import { Button, Flex, InputText, Label, Option } from "@buffetjs/core";
 
-export default function AddCard({
+export default function AddUseCase({
   isOpen,
   handleClose,
   handleToggle,
   updateSection,
-  sectionId,
   parentCardId,
   tags,
 }) {
   const [loading, setLoading] = useState();
   const [tag, setTag] = useState("");
   const [val, setValue] = useState({
+    parent_card_id: "",
     title: "",
     tags: [],
-    cards: [],
-    use_cases: [],
+    nodes: [],
   });
 
   useEffect(() => {
-    setValue({
-      ...val,
-      section_id: sectionId,
-      parent_card_id: parentCardId,
-      tags,
-    });
-  }, [sectionId, tags, parentCardId]);
+    setValue({ ...val, parent_card_id: parentCardId, tags });
+  }, [parentCardId, tags]);
 
   const addTags = () => {
     if (tag === "") {
@@ -48,10 +42,10 @@ export default function AddCard({
     setValue({ ...val, tags: filteredTags });
   };
 
-  const createNewCard = async () => {
+  const createNewUseCase = async () => {
     setLoading(true);
     try {
-      await request("/cards", {
+      await request("/use_cases", {
         method: "POST",
         body: val,
       });
@@ -70,7 +64,7 @@ export default function AddCard({
     <Modal isOpen={isOpen} onToggle={handleToggle} onClosed={handleClose}>
       <ModalHeader
         withBackButton
-        headerBreadcrumbs={["SubSection"]}
+        headerBreadcrumbs={["Use Case"]}
         onClickGoBack={handleClose}
       />
       <ModalBody>
@@ -126,7 +120,11 @@ export default function AddCard({
               Cancel
             </Button>
           </Flex>
-          <Button color="success" onClick={createNewCard} isLoading={loading}>
+          <Button
+            color="success"
+            onClick={createNewUseCase}
+            isLoading={loading}
+          >
             Save
           </Button>
         </section>

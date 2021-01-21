@@ -8,34 +8,33 @@ import {
 } from "strapi-helper-plugin";
 import { Button, Flex, InputText, Label, Option } from "@buffetjs/core";
 
-export default function AddCard({
+export default function EditUseCase({
   isOpen,
   handleClose,
   handleToggle,
   updateSection,
-  sectionId,
+  data,
   parentCardId,
-  tags,
 }) {
   const [loading, setLoading] = useState();
   const [tag, setTag] = useState("");
   const [val, setValue] = useState({
+    parent_card_id: "",
     title: "",
     tags: [],
-    cards: [],
-    use_cases: [],
+    nodes: [],
   });
 
   useEffect(() => {
     setValue({
       ...val,
-      section_id: sectionId,
+      title: data.title,
+      tags: data.tags,
       parent_card_id: parentCardId,
-      tags,
     });
-  }, [sectionId, tags, parentCardId]);
+  }, [data, parentCardId]);
 
-  const addTags = () => {
+  const addTag = () => {
     if (tag === "") {
       return;
     }
@@ -48,15 +47,32 @@ export default function AddCard({
     setValue({ ...val, tags: filteredTags });
   };
 
-  const createNewCard = async () => {
+  const useCaseUpdate = async () => {
     setLoading(true);
     try {
-      await request("/cards", {
-        method: "POST",
+      await request(`/use_cases/${data._id}`, {
+        method: "PUT",
         body: val,
       });
       setLoading(false);
-      strapi.notification.success("Saved");
+      strapi.notification.success("Updated");
+      handleClose();
+      updateSection();
+    } catch (error) {
+      setLoading(false);
+      strapi.notification.error("An error occured");
+      console.error(error);
+    }
+  };
+
+  const useCaseDelete = async () => {
+    setLoading(true);
+    try {
+      await request(`/use_cases/${data._id}`, {
+        method: "DELETE",
+      });
+      setLoading(false);
+      strapi.notification.success("Deleted");
       handleClose();
       updateSection();
     } catch (error) {
@@ -70,7 +86,7 @@ export default function AddCard({
     <Modal isOpen={isOpen} onToggle={handleToggle} onClosed={handleClose}>
       <ModalHeader
         withBackButton
-        headerBreadcrumbs={["SubSection"]}
+        headerBreadcrumbs={["Use case"]}
         onClickGoBack={handleClose}
       />
       <ModalBody>
@@ -89,9 +105,9 @@ export default function AddCard({
           <div className="col-md-12">
             <Label htmlFor="tag">Tags</Label>
             <div style={{ display: "flex", flexWrap: "wrap" }}>
-              {val.tags?.map((tag, index) => (
+              {val.tags?.map((tag, id) => (
                 <Option
-                  key={index}
+                  key={id}
                   label={tag}
                   margin="0 10px 6px 0"
                   onClick={() => deleteTag(tag)}
@@ -110,7 +126,7 @@ export default function AddCard({
                   value={tag}
                   onKeyPress={(event) => {
                     if (event.key === "Enter") {
-                      addTags();
+                      addTag();
                     }
                   }}
                 />
@@ -125,8 +141,11 @@ export default function AddCard({
             <Button color="cancel" onClick={handleToggle} className="mr-3">
               Cancel
             </Button>
+            <Button color="delete" onClick={useCaseDelete}>
+              Delete
+            </Button>
           </Flex>
-          <Button color="success" onClick={createNewCard} isLoading={loading}>
+          <Button color="success" onClick={useCaseUpdate} isLoading={loading}>
             Save
           </Button>
         </section>
