@@ -1,7 +1,4 @@
-import React, {Component} from "react";
-import PropTypes from "prop-types";
+import AddNode from "./AddNode";
+import EditNode from "./EditNode";
 
-class Node extends Component {
-}
-
-export default Card;
+export { AddNode, EditNode };

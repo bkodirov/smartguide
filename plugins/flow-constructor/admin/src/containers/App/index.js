@@ -12,7 +12,7 @@ import { NotFound } from "strapi-helper-plugin";
 import pluginId from "../../pluginId";
 // Containers
 import HomePage from "../HomePage";
-import UseCase from "../UseCasePage";
+import UseCasePage from "../UseCasePage";
 import SectionPage from "../SectionPage";
 import CardSectionPage from "../CardSectionPage";
 
@@ -31,9 +31,10 @@ const App = () => {
         />
         <Route
           path={`/plugins/${pluginId}/use_case/:id`}
-          component={UseCase} exact/>
+          component={UseCasePage}
+        />
 
-        <Route component={NotFound}/>
+        <Route component={NotFound} />
       </Switch>
     </div>
   );

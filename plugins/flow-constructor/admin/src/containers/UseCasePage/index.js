@@ -1,30 +1,68 @@
-import React, {memo, useState, useEffect} from "react";
+import React, { memo, useState, useEffect } from "react";
+import { request } from "strapi-helper-plugin";
 import Background from "../../components/Card/Background";
 import Container from "../../components/Card/CardContainer";
+import { Header } from "@buffetjs/custom";
+import { useParams } from "react-router-dom";
+import NodeSection from "../NodeSection";
 
-import {ModalHeader} from "strapi-helper-plugin";
+function UseCasePage() {
+  const params = useParams();
+  const [loading, setLoading] = useState();
+  const [useCase, setUseCase] = useState({});
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
-function handleClose(event) {
+  const getUseCaseDetail = async () => {
+    setLoading(true);
+    try {
+      const response = await request(`/use_cases/${params.id}`, {
+        method: "GET",
+      });
+      setLoading(false);
+      setUseCase(response);
+      console.log("getUseCaseDetail => ", response);
+    } catch (error) {
+      setLoading(false);
+      strapi.notification.error("An error occured");
+    }
+  };
 
-}
+  useEffect(() => {
+    getUseCaseDetail();
+  }, []);
 
-function createNewUseCase(event) {
-
-}
-
-function UseCase() {
   return (
     <Background>
       <Container>
-        <ModalHeader
-          withBackButton
-          headerBreadcrumbs={["Use Case"]}
-          onClickGoBack={handleClose}
-        />
-
+        <div className={"container-fluid"} style={{ padding: "18px 30px" }}>
+          <Header
+            title={{
+              label: useCase.title,
+            }}
+            content="Managing flow constructors easy with us!"
+            isLoading={loading}
+            actions={[
+              {
+                label: "Create a Node",
+                onClick: () => setIsAddModalOpen(true),
+                color: "primary",
+                type: "submit",
+                icon: true,
+              },
+            ]}
+          />
+          {!loading && (
+            <NodeSection
+              data={useCase}
+              updateSection={() => getUseCaseDetail()}
+              setIsAddModalOpen={setIsAddModalOpen}
+              isAddModalOpen={isAddModalOpen}
+            />
+          )}
+        </div>
       </Container>
     </Background>
   );
 }
 
-export default memo(UseCase);
+export default memo(UseCasePage);

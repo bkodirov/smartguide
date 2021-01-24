@@ -1,6 +1,6 @@
 import React from "react";
 import { IconLinks } from "@buffetjs/core";
-import { Row } from './Row'
+import { Row } from "./Row";
 
 export default function ListRow({ icon, description, links, name, onClick }) {
   const styles = {
@@ -11,13 +11,15 @@ export default function ListRow({ icon, description, links, name, onClick }) {
 
   return (
     <Row onClick={onClick}>
-      <td>{icon}</td>
+      {icon && <td>{icon}</td>}
       <td>
         <p style={styles.name}>{name}</p>
       </td>
-      <td>
-        <p>{description}</p>
-      </td>
+      {description && (
+        <td>
+          <p>{description}</p>
+        </td>
+      )}
       <td>
         <IconLinks links={links} />
       </td>
