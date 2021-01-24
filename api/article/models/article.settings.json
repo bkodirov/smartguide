@@ -31,12 +31,6 @@
       "min": 0,
       "max": 99
     },
-    "section": {
-      "type": "integer",
-      "required": true,
-      "min": 0,
-      "max": 99
-    },
     "paragraph": {
       "type": "integer",
       "required": true,
@@ -50,6 +44,18 @@
     "common_topic_child": {
       "type": "string",
       "required": false
+    },
+    "articleId": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "minLength": 3
+    },
+    "section": {
+      "type": "string",
+      "maxLength": 10,
+      "minLength": 1,
+      "required": true
     }
   }
 }
