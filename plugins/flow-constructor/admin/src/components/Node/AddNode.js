@@ -12,21 +12,21 @@ import { Link } from "react-router-dom";
 import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import pluginId from "../../pluginId";
+import LinkingNode from "./LinkingNode";
 
 export default function AddNode({
   isOpen,
   handleClose,
   handleToggle,
   updateSection,
-  parentNodeId,
   useCaseId,
   tags,
+  nodes,
 }) {
   const [loading, setLoading] = useState();
   const [tag, setTag] = useState("");
   const [answer, setAnswer] = useState("");
   const [val, setValue] = useState({
-    parent_node_id: "",
     use_case_id: "",
     question: {
       explanation: "",
@@ -46,14 +46,33 @@ export default function AddNode({
     // },
   });
 
+  const [open, setOpen] = useState(false);
+  const [currentAnswer, setCurrentAnswer] = useState(null);
+  const onToggle = () => {
+    setOpen(!open);
+  };
+  const onClose = () => {
+    setOpen(false);
+  };
+  const handleAnswer = (answer) => {
+    setCurrentAnswer(answer);
+    onToggle();
+  };
+
   useEffect(() => {
     setValue({
       ...val,
-      parent_node_id: parentNodeId,
       use_case_id: useCaseId,
       question: { ...val.question, tags },
     });
-  }, [parentNodeId, tags, useCaseId]);
+  }, [tags, useCaseId]);
+
+  const handleLinkingNode = (data) => {
+    setValue({
+      ...val,
+      question: { ...val.question, answers: [...val.question.answers, data] },
+    });
+  };
 
   const addTags = () => {
     if (tag === "") {
@@ -114,117 +133,130 @@ export default function AddNode({
   };
 
   return (
-    <Modal isOpen={isOpen} onToggle={handleToggle} onClosed={handleClose}>
-      <ModalHeader
-        withBackButton
-        headerBreadcrumbs={["Question"]}
-        onClickGoBack={handleClose}
-      />
-      <ModalBody>
-        <form style={{ display: "block", width: "100%" }}>
-          <div className="col-md-6 mb-5">
-            <Label htmlFor="explanation">Explanation</Label>
-            <InputText
-              name="explanation"
-              onChange={({ target: { value } }) => {
-                setValue({
-                  ...val,
-                  question: { ...val.question, explanation: value },
-                });
-              }}
-              type="text"
-              value={val.question.explanation}
-            />
-          </div>
-          <div className="col-md-6 mb-5">
-            <Label htmlFor="question_text">Question</Label>
-            <InputText
-              name="question_text"
-              onChange={({ target: { value } }) => {
-                setValue({
-                  ...val,
-                  question: { ...val.question, question_text: value },
-                });
-              }}
-              type="text"
-              value={val.question.question_text}
-            />
-          </div>
-          <div className="col-md-6 mb-3">
-            <Label htmlFor="answer">Answers</Label>
-            <InputText
-              name="answer"
-              onChange={({ target: { value } }) => {
-                setAnswer(value);
-              }}
-              placeholder="Add new answer"
-              type="text"
-              value={answer}
-              onKeyPress={(event) => {
-                if (event.key === "Enter") {
-                  addAnswer();
-                }
-              }}
-            />
-          </div>
-          <div className="col-md-6 mb-5">
-            {val.question.answers?.map((item, index) => (
-              <Answer key={index}>
-                <Link to={`/plugins/${pluginId}/node/${item._id}`}>
-                  {item.text}
-                </Link>
-                <FontAwesomeIcon
-                  icon={faTrashAlt}
-                  onClick={() => deleteAnswer(item.text)}
-                />
-              </Answer>
-            ))}
-          </div>
-          <div className="col-md-12">
-            <Label htmlFor="tag">Tags</Label>
-            <div style={{ display: "flex", flexWrap: "wrap" }}>
-              {val.question.tags?.map((tag, index) => (
-                <Option
-                  key={index}
-                  label={tag}
-                  margin="0 10px 6px 0"
-                  onClick={() => deleteTag(tag)}
-                />
+    <>
+      <Modal isOpen={isOpen} onToggle={handleToggle} onClosed={handleClose}>
+        <ModalHeader
+          withBackButton
+          headerBreadcrumbs={["Question"]}
+          onClickGoBack={handleClose}
+        />
+        <ModalBody>
+          <form style={{ display: "block", width: "100%" }}>
+            <div className="col-md-6 mb-5">
+              <Label htmlFor="explanation">Explanation</Label>
+              <InputText
+                name="explanation"
+                onChange={({ target: { value } }) => {
+                  setValue({
+                    ...val,
+                    question: { ...val.question, explanation: value },
+                  });
+                }}
+                type="text"
+                value={val.question.explanation}
+              />
+            </div>
+            <div className="col-md-6 mb-5">
+              <Label htmlFor="question_text">Question</Label>
+              <InputText
+                name="question_text"
+                onChange={({ target: { value } }) => {
+                  setValue({
+                    ...val,
+                    question: { ...val.question, question_text: value },
+                  });
+                }}
+                type="text"
+                value={val.question.question_text}
+              />
+            </div>
+            <div className="col-md-6 mb-3">
+              <Label htmlFor="answer">Answers</Label>
+              <InputText
+                name="answer"
+                onChange={({ target: { value } }) => {
+                  setAnswer(value);
+                }}
+                placeholder="Add new answer"
+                type="text"
+                value={answer}
+                onKeyPress={(event) => {
+                  if (event.key === "Enter") {
+                    addAnswer();
+                  }
+                }}
+              />
+            </div>
+            <div className="col-md-6 mb-5">
+              {val.question.answers?.map((item, index) => (
+                <Answer key={index}>
+                  <Link
+                    to={`/plugins/${pluginId}/use_case/${useCaseId}`}
+                    onClick={() => handleAnswer(item)}
+                  >
+                    {item.text}
+                  </Link>
+                  <FontAwesomeIcon
+                    icon={faTrashAlt}
+                    onClick={() => deleteAnswer(item.text)}
+                  />
+                </Answer>
               ))}
             </div>
-            <div className="row">
-              <div className="col-md-6">
-                <InputText
-                  name="tag"
-                  onChange={({ target: { value } }) => {
-                    setTag(value);
-                  }}
-                  placeholder="tags..."
-                  type="text"
-                  value={tag}
-                  onKeyPress={(event) => {
-                    if (event.key === "Enter") {
-                      addTags();
-                    }
-                  }}
-                />
+            <div className="col-md-12">
+              <Label htmlFor="tag">Tags</Label>
+              <div style={{ display: "flex", flexWrap: "wrap" }}>
+                {val.question.tags?.map((tag, index) => (
+                  <Option
+                    key={index}
+                    label={tag}
+                    margin="0 10px 6px 0"
+                    onClick={() => deleteTag(tag)}
+                  />
+                ))}
+              </div>
+              <div className="row">
+                <div className="col-md-6">
+                  <InputText
+                    name="tag"
+                    onChange={({ target: { value } }) => {
+                      setTag(value);
+                    }}
+                    placeholder="tags..."
+                    type="text"
+                    value={tag}
+                    onKeyPress={(event) => {
+                      if (event.key === "Enter") {
+                        addTags();
+                      }
+                    }}
+                  />
+                </div>
               </div>
             </div>
-          </div>
-        </form>
-      </ModalBody>
-      <ModalFooter>
-        <section>
-          <Flex>
-            <Button color="cancel" onClick={handleToggle} className="mr-3">
-              Cancel
+          </form>
+        </ModalBody>
+        <ModalFooter>
+          <section>
+            <Flex>
+              <Button color="cancel" onClick={handleToggle} className="mr-3">
+                Cancel
+              </Button>
+            </Flex>
+            <Button color="success" onClick={createNewNode} isLoading={loading}>
+              Save
             </Button>
-          </Flex>
-          <Button color="success" onClick={createNewNode} isLoading={loading}>
-            Save
-          </Button>
-        </section>
-      </ModalFooter>
-    </Modal>
+          </section>
+        </ModalFooter>
+      </Modal>
+      <LinkingNode
+        isOpen={open}
+        handleToggle={onToggle}
+        handleClose={onClose}
+        nodes={nodes}
+        answer={currentAnswer}
+        handleLinkingNode={handleLinkingNode}
+      />
+    </>
   );
 }

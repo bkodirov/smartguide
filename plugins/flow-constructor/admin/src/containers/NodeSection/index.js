@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import FlowDiagram from "../../components/FlowDiagram";
 import { AddNode, EditNode } from "../../components/Node";
+import { useLocation } from "react-router-dom";
 
 export default function NodeSection({
   data,
@@ -8,6 +9,8 @@ export default function NodeSection({
   setIsAddModalOpen,
   isAddModalOpen,
 }) {
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [currentNode, setCurrentNode] = useState({});
 
@@ -24,6 +27,13 @@ export default function NodeSection({
     setIsEditModalOpen(false);
   };
 
+  useEffect(() => {
+    const nodeId = params.get("node");
+    if (nodeId === data.head_node?._id) {
+      handleEditToggle(data.head_node);
+    }
+  }, [location, data]);
+
   const tags = data?.tags;
   return (
     <>
@@ -33,18 +43,18 @@ export default function NodeSection({
         handleClose={handleClose}
         handleToggle={() => setIsAddModalOpen(!isAddModalOpen)}
         updateSection={updateSection}
-        parentNodeId={data.head_node?._id}
         useCaseId={data._id}
+        nodes={data.nodes}
         tags={tags}
       />
-      <EditNode
+      {/* <EditNode
         isOpen={isEditModalOpen}
         handleClose={handleClose}
         handleToggle={handleEditToggle}
         updateSection={updateSection}
         data={currentNode}
         parentNodeId={data.head_node?._id}
-      />
+      /> */}
     </>
   );
 }
