@@ -12,10 +12,6 @@ function UseCasePage() {
   const [useCase, setUseCase] = useState({});
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
-  const handleAddToggle = () => {
-    setIsAddModalOpen(!isAddModalOpen);
-  };
-
   const getUseCaseDetail = async () => {
     setLoading(true);
     try {
@@ -41,14 +37,14 @@ function UseCasePage() {
         <div className={"container-fluid"} style={{ padding: "18px 30px" }}>
           <Header
             title={{
-              label: "Node",
+              label: useCase.title,
             }}
             content="Managing flow constructors easy with us!"
             isLoading={loading}
             actions={[
               {
                 label: "Create a Node",
-                onClick: () => handleAddToggle(),
+                onClick: () => setIsAddModalOpen(true),
                 color: "primary",
                 type: "submit",
                 icon: true,
@@ -59,7 +55,7 @@ function UseCasePage() {
             <NodeSection
               data={useCase}
               updateSection={() => getUseCaseDetail()}
-              handleAddToggle={() => handleAddToggle()}
+              setIsAddModalOpen={setIsAddModalOpen}
               isAddModalOpen={isAddModalOpen}
             />
           )}

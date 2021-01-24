@@ -43,7 +43,7 @@ function initDiagram() {
 }
 
 function handleModelChange(changes) {
-  alert("GoJS model changed!");
+  console.log("GoJS model changed!");
 }
 
 export default function FlowDiagram() {

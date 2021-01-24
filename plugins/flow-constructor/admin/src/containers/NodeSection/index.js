@@ -5,7 +5,7 @@ import { AddNode, EditNode } from "../../components/Node";
 export default function NodeSection({
   data,
   updateSection,
-  handleAddToggle,
+  setIsAddModalOpen,
   isAddModalOpen,
 }) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -20,20 +20,21 @@ export default function NodeSection({
     }
   };
   const handleClose = () => {
-    handleAddToggle();
+    setIsAddModalOpen(false);
     setIsEditModalOpen(false);
   };
 
   const tags = data?.tags;
   return (
-    <div className="row">
+    <>
       <FlowDiagram />
       <AddNode
         isOpen={isAddModalOpen}
         handleClose={handleClose}
-        handleToggle={handleAddToggle}
+        handleToggle={() => setIsAddModalOpen(!isAddModalOpen)}
         updateSection={updateSection}
         parentNodeId={data.head_node?._id}
+        useCaseId={data._id}
         tags={tags}
       />
       <EditNode
@@ -44,6 +45,6 @@ export default function NodeSection({
         data={currentNode}
         parentNodeId={data.head_node?._id}
       />
-    </div>
+    </>
   );
 }
