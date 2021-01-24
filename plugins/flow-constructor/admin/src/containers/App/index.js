@@ -15,6 +15,7 @@ import HomePage from "../HomePage";
 import UseCase from "../UseCasePage";
 import SectionPage from "../SectionPage";
 import CardSectionPage from "../CardSectionPage";
+import NodePage from "../NodePage";
 
 const App = () => {
   return (
@@ -29,10 +30,11 @@ const App = () => {
           path={`/plugins/${pluginId}/cards/:id`}
           component={CardSectionPage}
         />
+        <Route path={`/plugins/${pluginId}/node/:id`} component={NodePage} />
+        <Route component={NotFound} />
         <Route
           path={`/plugins/${pluginId}/use_case/:id`}
           component={UseCase} exact/>
-
         <Route component={NotFound}/>
       </Switch>
     </div>
