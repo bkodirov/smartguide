@@ -11,6 +11,8 @@
   },
   "devDependencies": {},
   "dependencies": {
+    "gojs": "^2.1.34",
+    "gojs-react": "^1.0.10",
     "joi": "^17.3.0",
     "knex": "<0.20.0",
     "sqlite3": "latest",

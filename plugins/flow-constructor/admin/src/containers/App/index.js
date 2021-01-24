@@ -14,6 +14,7 @@ import pluginId from "../../pluginId";
 import HomePage from "../HomePage";
 import SectionPage from "../SectionPage";
 import CardSectionPage from "../CardSectionPage";
+import NodePage from "../NodePage";
 
 const App = () => {
   return (
@@ -28,6 +29,7 @@ const App = () => {
           path={`/plugins/${pluginId}/subsection/:id`}
           component={CardSectionPage}
         />
+        <Route path={`/plugins/${pluginId}/node/:id`} component={NodePage} />
         <Route component={NotFound} />
       </Switch>
     </div>

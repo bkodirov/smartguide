@@ -1,0 +1,6 @@
+.diagram-component {
+  width: 100%;
+  height: calc(100vh - 60px - 60px);
+  border: solid 1px #e3e9f3;
+  background-color: white;
+}
