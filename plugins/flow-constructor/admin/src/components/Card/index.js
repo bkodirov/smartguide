@@ -30,7 +30,7 @@ function DataCard({ title, excerpt, edit, cardId }) {
   return (
     <CardView>
       <Link
-        to={`/plugins/${pluginId}/subsection/${cardId}`}
+        to={`/plugins/${pluginId}/cards/${cardId}`}
         className="card_title"
       >
         <h3>{title}</h3>
@@ -45,10 +45,10 @@ function DataCard({ title, excerpt, edit, cardId }) {
   );
 }
 
-function UseCaseCard({ title, edit, cardId }) {
+function UseCaseCard({ title, edit, useCaseId }) {
   return (
     <UseCaseCardView>
-      <Link to={`/plugins/${pluginId}/node/${cardId}`} className="card_title">
+      <Link to={`/plugins/${pluginId}/use_case/${useCaseId}`} className="card_title">
         <h3>{title}</h3>
       </Link>
       <div className="card_footer">

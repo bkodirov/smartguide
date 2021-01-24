@@ -24,7 +24,7 @@ export default function UseCaseSection({ data, updateSection }) {
     setIsEditModalOpen(false);
   };
 
-  const cards = data.parent_card?.use_cases;
+  const useCases = data.parent_card?.use_cases;
   const tags = data.parent_card?.tags;
   return (
     <div className="row">
@@ -35,12 +35,12 @@ export default function UseCaseSection({ data, updateSection }) {
         action={handleAddToggle}
       >
         <div className="row">
-          {cards?.map((card) => (
-            <div key={card._id} className="col-md-3">
+          {useCases?.map((useCase) => (
+            <div key={useCase._id} className="col-md-3">
               <UseCaseCard
-                title={card.title}
-                edit={() => handleEditToggle(card)}
-                cardId={card._id}
+                title={useCase.title}
+                edit={() => handleEditToggle(useCase)}
+                useCaseId={useCase._id}
               />
             </div>
           ))}
