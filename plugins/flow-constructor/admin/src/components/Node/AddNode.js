@@ -26,6 +26,8 @@ export default function AddNode({
   const [loading, setLoading] = useState();
   const [tag, setTag] = useState("");
   const [answer, setAnswer] = useState("");
+  const [link, setLink] = useState("");
+  const [conclusion, setConclusion] = useState(false);
   const [val, setValue] = useState({
     use_case_id: "",
     question: {
@@ -34,16 +36,11 @@ export default function AddNode({
       tags: [],
       answers: [],
     },
-    // conclusion: {
-    //   text: "",
-    //   links: [
-    //     {
-    //       text: "",
-    //       link: "",
-    //     },
-    //   ],
-    //   tags: [],
-    // },
+    conclusion: {
+      text: "",
+      links: [],
+      tags: [],
+    },
   });
 
   const [open, setOpen] = useState(false);
@@ -114,12 +111,47 @@ export default function AddNode({
     });
   };
 
+  const addLink = () => {
+    if (link === "") {
+      return;
+    }
+    setValue({
+      ...val,
+      conclusion: {
+        ...val.conclusion,
+        links: [...val.conclusion.links, { text: link }],
+      },
+    });
+    setLink("");
+  };
+
+  const deleteLink = (text) => {
+    const filteredLinks = val.conclusion.text.filter(
+      (link) => link.text !== text
+    );
+    setValue({
+      ...val,
+      conclusion: { ...val.conclusion, links: filteredLinks },
+    });
+  };
+
   const createNewNode = async () => {
     setLoading(true);
+
+    const questionData = {
+      use_case_id: val.use_case_id,
+      question: val.question,
+    };
+
+    const conclusionData = {
+      use_case_id: val.use_case_id,
+      conclusion: val.conclusion,
+    };
+
     try {
       await request("/nodes", {
         method: "POST",
-        body: val,
+        body: conclusion ? conclusionData : questionData,
       });
       setLoading(false);
       strapi.notification.success("Created");
@@ -137,104 +169,184 @@ export default function AddNode({
       <Modal isOpen={isOpen} onToggle={handleToggle} onClosed={handleClose}>
         <ModalHeader
           withBackButton
-          headerBreadcrumbs={["Question"]}
+          headerBreadcrumbs={[`${conclusion ? `Conclusion` : `Question`}`]}
           onClickGoBack={handleClose}
         />
         <ModalBody>
-          <form style={{ display: "block", width: "100%" }}>
-            <div className="col-md-6 mb-5">
-              <Label htmlFor="explanation">Explanation</Label>
-              <InputText
-                name="explanation"
-                onChange={({ target: { value } }) => {
-                  setValue({
-                    ...val,
-                    question: { ...val.question, explanation: value },
-                  });
-                }}
-                type="text"
-                value={val.question.explanation}
-              />
-            </div>
-            <div className="col-md-6 mb-5">
-              <Label htmlFor="question_text">Question</Label>
-              <InputText
-                name="question_text"
-                onChange={({ target: { value } }) => {
-                  setValue({
-                    ...val,
-                    question: { ...val.question, question_text: value },
-                  });
-                }}
-                type="text"
-                value={val.question.question_text}
-              />
-            </div>
-            <div className="col-md-6 mb-3">
-              <Label htmlFor="answer">Answers</Label>
-              <InputText
-                name="answer"
-                onChange={({ target: { value } }) => {
-                  setAnswer(value);
-                }}
-                placeholder="Add new answer"
-                type="text"
-                value={answer}
-                onKeyPress={(event) => {
-                  if (event.key === "Enter") {
-                    addAnswer();
-                  }
-                }}
-              />
-            </div>
-            <div className="col-md-6 mb-5">
-              {val.question.answers?.map((item, index) => (
-                <Answer key={index}>
-                  <Link
-                    to={`/plugins/${pluginId}/use_case/${useCaseId}`}
-                    onClick={() => handleAnswer(item)}
-                  >
-                    {item.text}
-                  </Link>
-                  <FontAwesomeIcon
-                    icon={faTrashAlt}
-                    onClick={() => deleteAnswer(item.text)}
-                  />
-                </Answer>
-              ))}
-            </div>
-            <div className="col-md-12">
-              <Label htmlFor="tag">Tags</Label>
-              <div style={{ display: "flex", flexWrap: "wrap" }}>
-                {val.question.tags?.map((tag, index) => (
-                  <Option
-                    key={index}
-                    label={tag}
-                    margin="0 10px 6px 0"
-                    onClick={() => deleteTag(tag)}
-                  />
+          {conclusion ? (
+            <form style={{ display: "block", width: "100%" }}>
+              <div className="col-md-6 mb-5">
+                <Label htmlFor="conclusion">Conclusion</Label>
+                <InputText
+                  name="conclusion"
+                  onChange={({ target: { value } }) => {
+                    setValue({
+                      ...val,
+                      conclusion: { ...val.conclusion, text: value },
+                    });
+                  }}
+                  type="text"
+                  value={val.conclusion.text}
+                />
+              </div>
+              <div className="col-md-6 mb-3">
+                <Label htmlFor="link">Links</Label>
+                <InputText
+                  name="link"
+                  onChange={({ target: { value } }) => {
+                    setLink(value);
+                  }}
+                  placeholder="Add new link"
+                  type="text"
+                  value={link}
+                  onKeyPress={(event) => {
+                    if (event.key === "Enter") {
+                      addLink();
+                    }
+                  }}
+                />
+              </div>
+              <div className="col-md-6 mb-5">
+                {val.conclusion.links?.map((item, index) => (
+                  <Answer key={index}>
+                    <Link to={`/plugins/${pluginId}/use_case/${useCaseId}`}>
+                      {item.text}
+                    </Link>
+                    <FontAwesomeIcon
+                      icon={faTrashAlt}
+                      onClick={() => deleteLink(item.text)}
+                    />
+                  </Answer>
                 ))}
               </div>
-              <div className="row">
-                <div className="col-md-6">
-                  <InputText
-                    name="tag"
-                    onChange={({ target: { value } }) => {
-                      setTag(value);
-                    }}
-                    placeholder="tags..."
-                    type="text"
-                    value={tag}
-                    onKeyPress={(event) => {
-                      if (event.key === "Enter") {
-                        addTags();
-                      }
-                    }}
-                  />
+              <div className="col-md-12">
+                <Label htmlFor="tag">Tags</Label>
+                <div style={{ display: "flex", flexWrap: "wrap" }}>
+                  {val.question.tags?.map((tag, index) => (
+                    <Option
+                      key={index}
+                      label={tag}
+                      margin="0 10px 6px 0"
+                      onClick={() => deleteTag(tag)}
+                    />
+                  ))}
+                </div>
+                <div className="row">
+                  <div className="col-md-6">
+                    <InputText
+                      name="tag"
+                      onChange={({ target: { value } }) => {
+                        setTag(value);
+                      }}
+                      placeholder="tags..."
+                      type="text"
+                      value={tag}
+                      onKeyPress={(event) => {
+                        if (event.key === "Enter") {
+                          addTags();
+                        }
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
-          </form>
+            </form>
+          ) : (
+            <form style={{ display: "block", width: "100%" }}>
+              <div className="col-md-6 mb-5">
+                <Label htmlFor="explanation">Explanation</Label>
+                <InputText
+                  name="explanation"
+                  onChange={({ target: { value } }) => {
+                    setValue({
+                      ...val,
+                      question: { ...val.question, explanation: value },
+                    });
+                  }}
+                  type="text"
+                  value={val.question.explanation}
+                />
+              </div>
+              <div className="col-md-6 mb-5">
+                <Label htmlFor="question_text">Question</Label>
+                <InputText
+                  name="question_text"
+                  onChange={({ target: { value } }) => {
+                    setValue({
+                      ...val,
+                      question: { ...val.question, question_text: value },
+                    });
+                  }}
+                  type="text"
+                  value={val.question.question_text}
+                />
+              </div>
+              <div className="col-md-6 mb-3">
+                <Label htmlFor="answer">Answers</Label>
+                <InputText
+                  name="answer"
+                  onChange={({ target: { value } }) => {
+                    setAnswer(value);
+                  }}
+                  placeholder="Add new answer"
+                  type="text"
+                  value={answer}
+                  onKeyPress={(event) => {
+                    if (event.key === "Enter") {
+                      addAnswer();
+                    }
+                  }}
+                />
+              </div>
+              <div className="col-md-6 mb-5">
+                {val.question.answers?.map((item, index) => (
+                  <Answer key={index}>
+                    <Link
+                      to={`/plugins/${pluginId}/use_case/${useCaseId}`}
+                      onClick={() => handleAnswer(item)}
+                    >
+                      {item.text}
+                    </Link>
+                    <FontAwesomeIcon
+                      icon={faTrashAlt}
+                      onClick={() => deleteAnswer(item.text)}
+                    />
+                  </Answer>
+                ))}
+              </div>
+              <div className="col-md-12">
+                <Label htmlFor="tag">Tags</Label>
+                <div style={{ display: "flex", flexWrap: "wrap" }}>
+                  {val.question.tags?.map((tag, index) => (
+                    <Option
+                      key={index}
+                      label={tag}
+                      margin="0 10px 6px 0"
+                      onClick={() => deleteTag(tag)}
+                    />
+                  ))}
+                </div>
+                <div className="row">
+                  <div className="col-md-6">
+                    <InputText
+                      name="tag"
+                      onChange={({ target: { value } }) => {
+                        setTag(value);
+                      }}
+                      placeholder="tags..."
+                      type="text"
+                      value={tag}
+                      onKeyPress={(event) => {
+                        if (event.key === "Enter") {
+                          addTags();
+                        }
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </form>
+          )}
         </ModalBody>
         <ModalFooter>
           <section>
