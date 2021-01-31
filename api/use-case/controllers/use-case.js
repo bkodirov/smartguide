@@ -47,11 +47,19 @@ module.exports = {
     if (idValidation.error) return ctx.send(idValidation.error.details[0], 400);
 
     try {
-      const updated = await strapi.services['use-case'].update(id, ctx.request.body);
-      if (updated) {
-        ctx.send({message: `Record with id:${id} updated`});
+      if (ctx.query._update_header) {
+        // BookKeep the old node id
+        // Update the header id
+        // Find the Node
+        // Fne the parent
+        // Update the parent's answer
       } else {
-        ctx.send({message: `Data with id:${id} not found`}, 404)
+        const updated = await strapi.services['use-case'].update(id, ctx.request.body);
+        if (updated) {
+          ctx.send({message: `Record with id:${id} updated`});
+        } else {
+          ctx.send({message: `Data with id:${id} not found`}, 404)
+        }
       }
     } catch (e) {
       return ctx.response.send({message: e.toString()}, 400);
