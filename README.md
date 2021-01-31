@@ -34,7 +34,7 @@ use_case: {
     parent_card_id: "asdasd",
     title: "1234",
     "tags": [],
-    head_node: #node,
+    head_node_id: "abcd",
     nodes: [ #node ]
 }
 ```

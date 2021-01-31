@@ -10,7 +10,8 @@ module.exports = {
   async find(ctx) {
     let entities;
     if (ctx.query._term) {
-      entities = await strapi.services.node.search(ctx.query._term);
+      if (!ctx.query._use_case_id) return ctx.response.send({message: `Node search must have _use_case_id query param`}, 400);
+      entities = await strapi.services.node.search(ctx.query._use_case_id, ctx.query._term);
     } else {
       entities = await strapi.services.node.find();
     }
@@ -57,11 +58,13 @@ module.exports = {
   },
 
   async delete(ctx) {
-    const {id} = ctx.params;
+    const {use_case_id, id} = ctx.params;
     const idValidation = validator.validateId(id);
+    const useCaseIdValidation = validator.validateId(use_case_id);
     if (idValidation.error) return ctx.send(idValidation.error.details[0], 400);
+    if (useCaseIdValidation.error) return ctx.send(useCaseIdValidation.error.details[0], 400);
 
-    const deleteEntity = await strapi.services.node.delete(id);
+    const deleteEntity = await strapi.services.node.delete(use_case_id, id);
     if (deleteEntity) {
       ctx.deleted();
     } else {

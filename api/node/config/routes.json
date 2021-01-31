@@ -42,7 +42,7 @@
     },
     {
       "method": "DELETE",
-      "path": "/nodes/:id",
+      "path": "/nodes/:use_case_id/:id",
       "handler": "node.delete",
       "config": {
         "policies": []

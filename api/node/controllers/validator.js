@@ -2,13 +2,15 @@ const Joi = require('joi');
 
 const schema = Joi.object({
   use_case_id: Joi.string().min(12).max(30).required(),
+  parent_node_id: Joi.string().min(12).max(30),
+  parent_answer_id: Joi.string().min(12).max(30),
   question: Joi.object({
     explanation: Joi.string().allow(''),
     question_text: Joi.string().required(),
     tags: Joi.array().items(Joi.string().min(2).max(12)),
     answers: Joi.array().items(Joi.object({
       text: Joi.string().required(),
-      node: Joi.string().min(12).max(30),
+      node_id: Joi.string().min(12).max(30),
     }).optional())
   }),
   conclusion: Joi.object({
