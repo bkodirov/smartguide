@@ -46,14 +46,17 @@ export default function FlowDiagram({ data }) {
   const createData = (node) => ({
     key: node._id,
     text: node.question ? node.question.question_text : node.conclusion.text,
-    color: invalidQuestions.has(node._id) ? "red" : "lightblue",
+    color: invalidQuestions.has(node._id) ? "red"   // If the node has invalid end
+      : node.conclusion ? 'green' // Leaf node
+        : !linkedNodes.has(node._id) ? 'lightyellow' // Should be connected
+          : "lightblue", // Ordinary node
   });
-  const linkedNodesArr = [];
-  if (data.head_node_id)
-    linkedNodesArr.push(createData(nodeMap.get(data.head_node_id)));
+  const nodeArray = [];
+  // Adding Linked nodes
+  if (data.head_node_id) nodeArray.push(createData(nodeMap.get(data.head_node_id)));
   linkedNodes.forEach((node) => {
     if (node.question && node.question.answers) {
-      linkedNodesArr.push(
+      nodeArray.push(
         ...node.question.answers
           .filter((answer) => answer.node_id !== undefined)
           .map((answer) => {
@@ -64,6 +67,8 @@ export default function FlowDiagram({ data }) {
       );
     }
   });
+  // Adding unlinked nodes
+  nodeArray.push(...unlinkedNodes.map(item=> createData(item)))
 
   function initDiagram() {
     const $ = go.GraphObject.make;
@@ -113,7 +118,7 @@ export default function FlowDiagram({ data }) {
       <ReactDiagram
         initDiagram={initDiagram}
         divClassName="diagram-component"
-        nodeDataArray={linkedNodesArr}
+        nodeDataArray={nodeArray}
         onModelChange={handleModelChange}
       />
     </div>
