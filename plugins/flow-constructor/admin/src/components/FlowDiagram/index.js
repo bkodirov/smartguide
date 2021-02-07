@@ -81,13 +81,26 @@ export default function FlowDiagram({data}) {
     if (!linkedNodes.has(item._id)) unlinkedNodes.push(item)
   });
 
+  const createData = (node) => ({
+    key: node._id,
+    text: node.question ? node.question.question_text : node.conclusion.text,
+    color: invalidQuestions.has(node._id) ? 'red' : 'lightblue',
+  })
   const linkedNodesArr = []
-  linkedNodes.forEach((node) => linkedNodesArr.push(
-    {
-      key: node._id,
-      text: node.question ? node.question.question_text : node.conclusion.text,
-      color: invalidQuestions.has(node._id) ? 'red' : 'lightblue',
-    })
+  if (data.head_node_id) linkedNodesArr.push(createData(nodeMap.get(data.head_node_id)))
+  linkedNodes.forEach((node) => {
+      if (node.question && node.question.answers) {
+        linkedNodesArr.push(
+          ...node.question.answers
+            .filter(answer => answer.node_id !== undefined)
+            .map(answer => {
+              const treeData = createData(nodeMap.get(answer.node_id))
+              treeData.parent = node._id
+              return treeData
+            })
+        )
+      }
+    }
   )
 
   return (
