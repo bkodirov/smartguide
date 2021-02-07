@@ -13,9 +13,7 @@ function initDiagram() {
       text: "new node",
       color: "lightblue",
     },
-    model: $(go.GraphLinksModel, {
-      linkKeyProperty: "key", // IMPORTANT! must be defined for merges and data sync when using GraphLinksModel
-    }),
+    model: $(go.TreeModel),
   });
 
   diagram.addDiagramListener("ObjectDoubleClicked", function (ev) {
@@ -43,7 +41,6 @@ function initDiagram() {
       new go.Binding("text").makeTwoWay()
     )
   );
-
   return diagram;
 }
 
@@ -99,7 +96,6 @@ export default function FlowDiagram({data}) {
         initDiagram={initDiagram}
         divClassName="diagram-component"
         nodeDataArray={linkedNodesArr}
-        linkDataArray={[]}
         onModelChange={handleModelChange}
       />
     </div>
