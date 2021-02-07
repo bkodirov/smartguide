@@ -14,6 +14,7 @@ function initDiagram() {
       color: "lightblue",
     },
     model: $(go.TreeModel),
+    layout: $(go.TreeLayout, { angle: 90, layerSpacing: 35 })
   });
 
   diagram.addDiagramListener("ObjectDoubleClicked", function (ev) {
@@ -41,6 +42,8 @@ function initDiagram() {
       new go.Binding("text").makeTwoWay()
     )
   );
+  // define a TreeLayout that flows from top to bottom
+
   return diagram;
 }
 
