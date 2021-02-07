@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   request,
   Modal,
@@ -12,16 +12,11 @@ import { Link } from "react-router-dom";
 import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import pluginId from "../../pluginId";
+import Context from "../../contexts/Context";
 
-export default function EditNode({
-  isOpen,
-  handleClose,
-  handleToggle,
-  updateSection,
-  parentNodeId,
-  useCaseId,
-  data,
-}) {
+export default function EditNode({ updateSection, parentNodeId }) {
+  const { state, dispatch } = useContext(Context);
+  const { currentData } = state?.modal;
   const [loading, setLoading] = useState();
   const [tag, setTag] = useState("");
   const [answer, setAnswer] = useState("");
@@ -49,10 +44,11 @@ export default function EditNode({
   useEffect(() => {
     setValue({
       ...val,
-      use_case_id: useCaseId,
-      question: data.question,
+      parent_node_id: parentNodeId,
+      use_case_id: currentData.use_case_id,
+      question: currentData.question,
     });
-  }, [data, useCaseId]);
+  }, [state, parentNodeId]);
 
   const addTags = () => {
     if (tag === "") {
@@ -97,7 +93,7 @@ export default function EditNode({
   const updateNode = async () => {
     setLoading(true);
     try {
-      await request(`/nodes/${data._id}`, {
+      await request(`/nodes/${currentData._id}`, {
         method: "PUT",
         body: val,
       });
@@ -112,8 +108,41 @@ export default function EditNode({
     }
   };
 
+  const deleteNode = async () => {
+    setLoading(true);
+    try {
+      await request(`/nodes/${currentData._id}`, {
+        method: "DELETE",
+      });
+      setLoading(false);
+      strapi.notification.success("Created");
+      handleClose();
+      updateSection();
+    } catch (error) {
+      setLoading(false);
+      strapi.notification.error("An error occured");
+      console.error(error);
+    }
+  };
+
+  const handleToggle = () => {
+    dispatch({
+      type: "toggle_edit_modal",
+      payload: {},
+    });
+  };
+  const handleClose = () => {
+    dispatch({
+      type: "close_modal",
+    });
+  };
+
   return (
-    <Modal isOpen={isOpen} onToggle={handleToggle} onClosed={handleClose}>
+    <Modal
+      isOpen={state?.modal?.isEditModalOpen}
+      onToggle={handleToggle}
+      onClosed={handleClose}
+    >
       <ModalHeader
         withBackButton
         headerBreadcrumbs={["Question"]}
@@ -132,7 +161,7 @@ export default function EditNode({
                 });
               }}
               type="text"
-              value={val.question.explanation}
+              value={val.question?.explanation}
             />
           </div>
           <div className="col-md-6 mb-5">
@@ -146,7 +175,7 @@ export default function EditNode({
                 });
               }}
               type="text"
-              value={val.question.question_text}
+              value={val.question?.question_text}
             />
           </div>
           <div className="col-md-6 mb-3">
@@ -167,10 +196,10 @@ export default function EditNode({
             />
           </div>
           <div className="col-md-6 mb-5">
-            {val.question.answers?.map((item, index) => (
+            {val.question?.answers?.map((item, index) => (
               <Answer key={index}>
                 <Link
-                  to={`/plugins/${pluginId}/use_case/${useCaseId}?node=${parentNodeId}`}
+                  to={`/plugins/${pluginId}/use_case/${val.use_case_id}?node=${parentNodeId}`}
                 >
                   {item.text}
                 </Link>
@@ -184,7 +213,7 @@ export default function EditNode({
           <div className="col-md-12">
             <Label htmlFor="tag">Tags</Label>
             <div style={{ display: "flex", flexWrap: "wrap" }}>
-              {val.question.tags?.map((tag, index) => (
+              {val.question?.tags?.map((tag, index) => (
                 <Option
                   key={index}
                   label={tag}
@@ -219,6 +248,9 @@ export default function EditNode({
           <Flex>
             <Button color="cancel" onClick={handleToggle} className="mr-3">
               Cancel
+            </Button>
+            <Button color="delete" onClick={deleteNode}>
+              Delete
             </Button>
           </Flex>
           <Button color="success" onClick={updateNode} isLoading={loading}>

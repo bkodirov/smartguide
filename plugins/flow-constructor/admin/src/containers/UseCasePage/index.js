@@ -1,16 +1,17 @@
-import React, { memo, useState, useEffect } from "react";
+import React, { memo, useState, useEffect, useContext } from "react";
 import { request } from "strapi-helper-plugin";
 import Background from "../../components/Card/Background";
 import Container from "../../components/Card/CardContainer";
 import { Header } from "@buffetjs/custom";
 import { useParams } from "react-router-dom";
 import NodeSection from "../NodeSection";
+import Context from "../../contexts/Context";
 
 function UseCasePage() {
+  const { state, dispatch } = useContext(Context);
   const params = useParams();
   const [loading, setLoading] = useState(true);
   const [useCase, setUseCase] = useState({});
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const getUseCaseDetail = async () => {
     setLoading(true);
@@ -43,7 +44,7 @@ function UseCasePage() {
             actions={[
               {
                 label: "Create a Node",
-                onClick: () => setIsAddModalOpen(true),
+                onClick: () => dispatch({ type: "toggle_add_modal" }),
                 color: "primary",
                 type: "submit",
                 icon: true,
@@ -54,8 +55,6 @@ function UseCasePage() {
             <NodeSection
               data={useCase}
               updateSection={() => getUseCaseDetail()}
-              setIsAddModalOpen={setIsAddModalOpen}
-              isAddModalOpen={isAddModalOpen}
             />
           )}
         </div>
