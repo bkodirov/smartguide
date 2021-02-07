@@ -8,7 +8,7 @@ import NodeSection from "../NodeSection";
 
 function UseCasePage() {
   const params = useParams();
-  const [loading, setLoading] = useState();
+  const [loading, setLoading] = useState(true);
   const [useCase, setUseCase] = useState({});
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
@@ -18,8 +18,8 @@ function UseCasePage() {
       const response = await request(`/use_cases/${params.id}`, {
         method: "GET",
       });
-      setLoading(false);
       setUseCase(response);
+      setLoading(false);
       console.log("getUseCaseDetail => ", response);
     } catch (error) {
       setLoading(false);
@@ -39,7 +39,6 @@ function UseCasePage() {
             title={{
               label: useCase.title,
             }}
-            content="Managing flow constructors easy with us!"
             isLoading={loading}
             actions={[
               {

@@ -30,7 +30,6 @@ export default function UseCaseSection({ data, updateSection }) {
     <div className="row">
       <Block
         title="UseCases"
-        description="Configure the Flow Constructor"
         style={{ marginBottom: 16 }}
         action={handleAddToggle}
       >

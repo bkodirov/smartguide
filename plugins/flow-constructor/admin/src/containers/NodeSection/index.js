@@ -37,7 +37,6 @@ export default function NodeSection({
   const tags = data?.tags;
   return (
     <>
-      <FlowDiagram />
       <AddNode
         isOpen={isAddModalOpen}
         handleClose={handleClose}
@@ -45,7 +44,12 @@ export default function NodeSection({
         updateSection={updateSection}
         useCaseId={data._id}
         nodes={data.nodes}
+        parentNodeId={null}
+        answerId={null}
         tags={tags}
+      />
+      <FlowDiagram
+        data={data}
       />
       {/* <EditNode
         isOpen={isEditModalOpen}

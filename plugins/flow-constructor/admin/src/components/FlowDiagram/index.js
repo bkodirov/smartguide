@@ -1,13 +1,13 @@
 import React from "react";
 import * as go from "gojs";
-import { ReactDiagram } from "gojs-react";
+import {ReactDiagram} from "gojs-react";
 import "./style.css";
 
 function initDiagram() {
   const $ = go.GraphObject.make;
   // set your license key here before creating the diagram: go.Diagram.licenseKey = "...";
   const diagram = $(go.Diagram, {
-    "undoManager.isEnabled": true, // must be set to allow for model change listening
+    "undoManager.isEnabled": false, // must be set to allow for model change listening
     // 'undoManager.maxHistoryLength': 0,  // uncomment disable undo/redo functionality
     "clickCreatingTool.archetypeNodeData": {
       text: "new node",
@@ -16,6 +16,11 @@ function initDiagram() {
     model: $(go.GraphLinksModel, {
       linkKeyProperty: "key", // IMPORTANT! must be defined for merges and data sync when using GraphLinksModel
     }),
+  });
+
+  diagram.addDiagramListener("ObjectDoubleClicked", function (ev) {
+    console.log(ev.subject); //Successfully logs the node you clicked.
+    console.log(ev.parameter); //Successfully logs the node's name.
   });
 
   // define a simple Node template
@@ -28,13 +33,13 @@ function initDiagram() {
     $(
       go.Shape,
       "RoundedRectangle",
-      { name: "SHAPE", fill: "white", strokeWidth: 0 },
+      {name: "SHAPE", fill: "white", strokeWidth: 0},
       // Shape.fill is bound to Node.data.color
       new go.Binding("fill", "color")
     ),
     $(
       go.TextBlock,
-      { margin: 8, editable: true }, // some room around the text
+      {margin: 8, editable: false}, // some room around the text
       new go.Binding("text").makeTwoWay()
     )
   );
@@ -46,25 +51,55 @@ function handleModelChange(changes) {
   console.log("GoJS model changed!");
 }
 
-export default function FlowDiagram() {
+export default function FlowDiagram({data}) {
+  const unlinkedNodes = [];
+  const linkedNodes = new Map();
+  const invalidQuestions = new Map();
+  const nodeMap = new Map();
+  data.nodes.forEach(item => nodeMap.set(item._id, item));
+
+  function findLinked(node) {
+    if (!node) return
+    if (!node.conclusion && !node.question) return
+    if (linkedNodes.has(node._id)) return
+
+    linkedNodes.set(node._id, node)
+    if (node.question) {
+      linkedNodes.set(node._id, node)
+      if (node.question.answers) {
+        if (node.question.answers.length === 0) invalidQuestions.set(node._id, node)
+        node.question.answers.forEach(item => {
+          if (!item.node_id) {
+            invalidQuestions.set(node._id, node)
+          } else {
+            findLinked(nodeMap.get(item.node_id))
+          }
+        });
+      }
+    }
+  }
+
+  if (data.head_node_id) findLinked(nodeMap.get(data.head_node_id))
+  data.nodes.forEach(item => {
+    if (!linkedNodes.has(item._id)) unlinkedNodes.push(item)
+  });
+
+  const linkedNodesArr = []
+  linkedNodes.forEach((node) => linkedNodesArr.push(
+    {
+      key: node._id,
+      text: node.question ? node.question.question_text : node.conclusion.text,
+      color: invalidQuestions.has(node._id) ? 'red' : 'lightblue',
+    })
+  )
+
   return (
     <div>
       <ReactDiagram
         initDiagram={initDiagram}
         divClassName="diagram-component"
-        nodeDataArray={[
-          { key: 0, text: "Alpha", color: "lightblue", loc: "0 0" },
-          { key: 1, text: "Beta", color: "orange", loc: "150 0" },
-          { key: 2, text: "Gamma", color: "lightgreen", loc: "0 150" },
-          { key: 3, text: "Delta", color: "pink", loc: "150 150" },
-        ]}
-        linkDataArray={[
-          { key: -1, from: 0, to: 1 },
-          { key: -2, from: 0, to: 2 },
-          { key: -3, from: 1, to: 1 },
-          { key: -4, from: 2, to: 3 },
-          { key: -5, from: 3, to: 0 },
-        ]}
+        nodeDataArray={linkedNodesArr}
+        linkDataArray={[]}
         onModelChange={handleModelChange}
       />
     </div>

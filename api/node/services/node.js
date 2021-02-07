@@ -44,7 +44,7 @@ module.exports = {
     node._id = crypto.randomBytes(16).toString("hex");
     if (node.question) {
       if (!node.question.answers) node.question.answers = []
-      node.question = node.question.answers.map(item => {
+      node.question.answers = node.question.answers.map(item => {
         if (!item._id) {
           item._id = crypto.randomBytes(16).toString("hex");
         }
@@ -60,19 +60,23 @@ module.exports = {
     if (!useCase.nodes) {
       useCase.nodes = [node]
     } else {
-      useCase.nodes.push(node._id)
+      useCase.nodes.push(node)
     }
-    useCase.nodes.forEach(nextNode => {
-      if (nextNode._id === parentNodeId) {
-        if (nextNode.question) {
-          nextNode.question.answers.forEach(answer => {
-            if (answer._id === answerId) answer.node_id = node._id
-          })
-        } else {
-          console.error(`Parent node doesn't have a question. Illegal state`)
+    // If the node has a parent, make sure its
+    if (parentNodeId) {
+      if (!answerId) throw Error('Node has Parent but not AnswerID')
+      useCase.nodes.forEach(nextNode => {
+        if (nextNode._id === parentNodeId) {
+          if (nextNode.question) {
+            nextNode.question.answers.forEach(answer => {
+              if (answer._id === answerId) answer.node_id = node._id
+            })
+          } else {
+            console.error(`Parent node doesn't have a question. Illegal state`)
+          }
         }
-      }
-    });
+      });
+    }
     await strapi.services['use-case'].update(useCase._id, useCase);
     return node;
   },

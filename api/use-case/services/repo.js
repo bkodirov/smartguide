@@ -53,11 +53,6 @@ function toJson(useCase) {
 
 function convertDbModel(useCase) {
   if (!useCase) return useCase;
-  if (useCase.head_node) {
-    useCase.head_node = useCase.head_node._id
-  } else {
-    useCase.nodes = useCase.nodes.map(node => node._id)
-  }
   delete useCase._id;
   return useCase
 }

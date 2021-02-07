@@ -20,8 +20,10 @@ export default function AddNode({
   handleToggle,
   updateSection,
   useCaseId,
-  tags,
   nodes,
+  parentNodeId,
+  answerId,
+  tags,
 }) {
   const [loading, setLoading] = useState();
   const [tag, setTag] = useState("");
@@ -29,6 +31,8 @@ export default function AddNode({
   const [link, setLink] = useState("");
   const [conclusion, setConclusion] = useState(false);
   const [val, setValue] = useState({
+    parentNodeId,
+    answerId,
     use_case_id: "",
     question: {
       explanation: "",
@@ -355,9 +359,7 @@ export default function AddNode({
                 Cancel
               </Button>
             </Flex>
-            <Button color="success" onClick={createNewNode} isLoading={loading}>
-              Save
-            </Button>
+            <Button color="success" onClick={createNewNode} isLoading={loading}>Save</Button>
           </section>
         </ModalFooter>
       </Modal>
