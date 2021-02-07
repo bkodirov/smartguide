@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   request,
   Modal,
@@ -13,11 +13,9 @@ import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import pluginId from "../../pluginId";
 import LinkingNode from "./LinkingNode";
+import Context from "../../contexts/Context";
 
 export default function AddNode({
-  isOpen,
-  handleClose,
-  handleToggle,
   updateSection,
   useCaseId,
   nodes,
@@ -25,6 +23,7 @@ export default function AddNode({
   answerId,
   tags,
 }) {
+  const { state, dispatch } = useContext(Context);
   const [loading, setLoading] = useState();
   const [tag, setTag] = useState("");
   const [answer, setAnswer] = useState("");
@@ -168,9 +167,24 @@ export default function AddNode({
     }
   };
 
+  const handleToggle = () => {
+    dispatch({
+      type: "toggle_add_modal",
+    });
+  };
+  const handleClose = () => {
+    dispatch({
+      type: "close_modal",
+    });
+  };
+
   return (
     <>
-      <Modal isOpen={isOpen} onToggle={handleToggle} onClosed={handleClose}>
+      <Modal
+        isOpen={state?.modal?.isAddModalOpen}
+        onToggle={handleToggle}
+        onClosed={handleClose}
+      >
         <ModalHeader
           withBackButton
           headerBreadcrumbs={[`${conclusion ? `Conclusion` : `Question`}`]}
@@ -359,7 +373,9 @@ export default function AddNode({
                 Cancel
               </Button>
             </Flex>
-            <Button color="success" onClick={createNewNode} isLoading={loading}>Save</Button>
+            <Button color="success" onClick={createNewNode} isLoading={loading}>
+              Save
+            </Button>
           </section>
         </ModalFooter>
       </Modal>
