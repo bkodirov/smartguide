@@ -1,6 +1,6 @@
 import React from "react";
 import FlowDiagram from "../../components/FlowDiagram";
-import { AddNode, EditNode } from "../../components/Node";
+import { AddNode, EditNode, LinkingNode } from "../../components/Node";
 
 export default function NodeSection({ data, updateSection }) {
   const tags = data?.tags;
@@ -19,6 +19,7 @@ export default function NodeSection({ data, updateSection }) {
         updateSection={updateSection}
         parentNodeId={data.head_node?._id}
       />
+      <LinkingNode nodes={data.nodes} />
     </>
   );
 }

@@ -137,6 +137,11 @@ export default function EditNode({ updateSection, parentNodeId }) {
     });
   };
 
+  const handleAnswer = (event, answer) => {
+    event.stopPropagation();
+    dispatch({ type: "toggle_linking_modal", payload: answer });
+  };
+
   return (
     <Modal
       isOpen={state?.modal?.isEditModalOpen}
@@ -199,7 +204,8 @@ export default function EditNode({ updateSection, parentNodeId }) {
             {val.question?.answers?.map((item, index) => (
               <Answer key={index}>
                 <Link
-                  to={`/plugins/${pluginId}/use_case/${val.use_case_id}?node=${parentNodeId}`}
+                  to={`/plugins/${pluginId}/use_case/${val.use_case_id}`}
+                  onClick={(event) => handleAnswer(event, item)}
                 >
                   {item.text}
                 </Link>

@@ -1,20 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   Modal,
   ModalFooter,
   ModalBody,
   ModalHeader,
 } from "strapi-helper-plugin";
-import { Button, Flex, InputText, Label, Select } from "@buffetjs/core";
+import { Button, Flex, Label, Select } from "@buffetjs/core";
+import Context from "../../contexts/Context";
 
-export default function LinkingNode({
-  isOpen,
-  handleClose,
-  handleToggle,
-  nodes,
-  answer,
-  handleLinkingNode,
-}) {
+export default function LinkingNode({ nodes }) {
+  const { state, dispatch } = useContext(Context);
   const [val, setValue] = useState("child question");
   const [options, setOptions] = useState([]);
 
@@ -26,13 +21,27 @@ export default function LinkingNode({
   }, [nodes]);
 
   const onSave = () => {
-    const question = nodes.find((node) => node.question.question_text === val);
-    handleLinkingNode({ text: answer.text, node_id: question._id });
     handleClose();
   };
 
+  const handleToggle = () => {
+    dispatch({
+      type: "toggle_linking_modal",
+      payload: {},
+    });
+  };
+  const handleClose = () => {
+    dispatch({
+      type: "close_modal",
+    });
+  };
+
   return (
-    <Modal isOpen={isOpen} onToggle={handleToggle} onClosed={handleClose}>
+    <Modal
+      isOpen={state?.modal?.isLinkingModalOpen}
+      onToggle={handleToggle}
+      onClosed={handleClose}
+    >
       <ModalHeader
         withBackButton
         headerBreadcrumbs={["Linking to the question"]}

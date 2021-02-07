@@ -12,13 +12,11 @@ import { Link } from "react-router-dom";
 import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import pluginId from "../../pluginId";
-import LinkingNode from "./LinkingNode";
 import Context from "../../contexts/Context";
 
 export default function AddNode({
   updateSection,
   useCaseId,
-  nodes,
   parentNodeId,
   answerId,
   tags,
@@ -46,19 +44,6 @@ export default function AddNode({
     },
   });
 
-  const [open, setOpen] = useState(false);
-  const [currentAnswer, setCurrentAnswer] = useState(null);
-  const onToggle = () => {
-    setOpen(!open);
-  };
-  const onClose = () => {
-    setOpen(false);
-  };
-  const handleAnswer = (answer) => {
-    setCurrentAnswer(answer);
-    onToggle();
-  };
-
   useEffect(() => {
     setValue({
       ...val,
@@ -66,13 +51,6 @@ export default function AddNode({
       question: { ...val.question, tags },
     });
   }, [tags, useCaseId]);
-
-  const handleLinkingNode = (data) => {
-    setValue({
-      ...val,
-      question: { ...val.question, answers: [...val.question.answers, data] },
-    });
-  };
 
   const addTags = () => {
     if (tag === "") {
@@ -176,6 +154,11 @@ export default function AddNode({
     dispatch({
       type: "close_modal",
     });
+  };
+
+  const handleAnswer = (event, answer) => {
+    event.stopPropagation();
+    dispatch({ type: "toggle_linking_modal", payload: answer });
   };
 
   return (
@@ -321,7 +304,7 @@ export default function AddNode({
                   <Answer key={index}>
                     <Link
                       to={`/plugins/${pluginId}/use_case/${useCaseId}`}
-                      onClick={() => handleAnswer(item)}
+                      onClick={(event) => handleAnswer(event, item)}
                     >
                       {item.text}
                     </Link>
@@ -379,14 +362,6 @@ export default function AddNode({
           </section>
         </ModalFooter>
       </Modal>
-      <LinkingNode
-        isOpen={open}
-        handleToggle={onToggle}
-        handleClose={onClose}
-        nodes={nodes}
-        answer={currentAnswer}
-        handleLinkingNode={handleLinkingNode}
-      />
     </>
   );
 }

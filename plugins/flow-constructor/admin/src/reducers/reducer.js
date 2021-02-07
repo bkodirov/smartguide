@@ -3,6 +3,8 @@ export const initialState = {
     isAddModalOpen: false,
     isEditModalOpen: false,
     currentData: {},
+    isLinkingModalOpen: false,
+    currentAnswer: {},
   },
 };
 
@@ -24,6 +26,7 @@ export default function reducer(state, action) {
           ...state.modal,
           isAddModalOpen: false,
           isEditModalOpen: false,
+          isLinkingModalOpen: false,
           currentData: {},
         },
       };
@@ -33,6 +36,15 @@ export default function reducer(state, action) {
         modal: {
           ...state.modal,
           isAddModalOpen: !state.modal.isAddModalOpen,
+        },
+      };
+    case "toggle_linking_modal":
+      return {
+        ...state,
+        modal: {
+          ...state.modal,
+          isLinkingModalOpen: !state.modal.isLinkingModalOpen,
+          currentAnswer: action.payload,
         },
       };
     default:
