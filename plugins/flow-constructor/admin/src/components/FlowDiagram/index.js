@@ -19,7 +19,9 @@ function initDiagram() {
   });
 
   diagram.addDiagramListener("ObjectDoubleClicked", function (ev) {
-    console.log(ev.subject); //Successfully logs the node you clicked.
+    let data = ev.subject.og.lb;
+    // TODO Doniyor, use data.key as a Node id you want fetch. nodeMap.get(data.key) should return the Node
+    console.log(data); //Successfully logs the node you clicked.
     console.log(ev.parameter); //Successfully logs the node's name.
   });
 
@@ -27,9 +29,7 @@ function initDiagram() {
   diagram.nodeTemplate = $(
     go.Node,
     "Auto", // the Shape will go around the TextBlock
-    new go.Binding("location", "loc", go.Point.parse).makeTwoWay(
-      go.Point.stringify
-    ),
+    new go.Binding("key", "key"),
     $(
       go.Shape,
       "RoundedRectangle",
