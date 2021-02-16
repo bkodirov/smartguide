@@ -41,16 +41,16 @@ export default function LinkingNode({useCase, answer, onSave, onClose, onNewNode
       </ModalBody>
       <ModalFooter>
         <section>
-          <Flex>
-            <Button color="primary" onClick={onNewNode} className="mr-3">
-              New Question
-            </Button>
-            <Button color="cancel" onClick={onNewNode} className="mr-3">
-              New Conclusion
-            </Button>
-          </Flex>
+          {/*<Flex>*/}
+          {/*  <Button color="primary" onClick={onNewNode} className="mr-3">*/}
+          {/*    New Question*/}
+          {/*  </Button>*/}
+          {/*  <Button color="cancel" onClick={onNewNode} className="mr-3">*/}
+          {/*    New Conclusion*/}
+          {/*  </Button>*/}
+          {/*</Flex>*/}
           <Button color="success" onClick={() => {
-            onSave(useCase.nodes[selectedIndex], answer)
+            onSave(unlinkedNodes[selectedIndex], answer)
           }}>
             Save
           </Button>

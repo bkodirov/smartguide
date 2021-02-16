@@ -5,6 +5,11 @@ const crypto = require('crypto');
  * to customize this service
  */
 
+const appendIdToAnswers = (question) => {
+  question?.answers?.forEach(item => {
+    if (!item._id) item._id = crypto.randomBytes(16).toString("hex");
+  });
+}
 module.exports = {
   async search(useCaseId, term) {
     const useCase = await strapi.services['use-case'].findOne(useCaseId);
@@ -44,12 +49,7 @@ module.exports = {
     node._id = crypto.randomBytes(16).toString("hex");
     if (node.question) {
       if (!node.question.answers) node.question.answers = []
-      node.question.answers = node.question.answers.map(item => {
-        if (!item._id) {
-          item._id = crypto.randomBytes(16).toString("hex");
-        }
-        return item;
-      });
+      appendIdToAnswers(node.question)
     }
 
     const useCase = await strapi.services['use-case'].findOne(node.use_case_id);
@@ -82,9 +82,10 @@ module.exports = {
   },
 
   async update(nodeId, node) {
+    appendIdToAnswers(node.question)
     // Update UC children
     const useCase = await strapi.services['use-case'].findOne(node.use_case_id);
-    useCase.nodes = useCase.nodes.filter(node => node._id !== nodeId);
+    useCase.nodes = useCase.nodes.filter(item => item._id !== nodeId);
     useCase.nodes.push(node)
     const updatedUseCase = await strapi.services['use-case'].update(useCase._id, useCase);
     return node;
@@ -113,11 +114,11 @@ module.exports = {
           if (shouldDelete) {
             nodeToDelete = node;
           }
-          return shouldDelete;
+          return !shouldDelete;
         })
       }
       await strapi.services['use-case'].update(useCase._id, useCase);
     }
-    return remove(nodeId);
+    return nodeToDelete;
   },
 };

@@ -87,11 +87,11 @@ export default function EditNode({ updateSection, useCase, node , handleClose}) 
   const deleteNode = async () => {
     setLoading(true);
     try {
-      await request(`/nodes/${node._id}`, {
+      await request(`/nodes/${useCase._id}/${node._id}`, {
         method: "DELETE",
       });
       setLoading(false);
-      strapi.notification.success("Created");
+      strapi.notification.success("Node deleted");
       handleClose();
       updateSection();
     } catch (error) {

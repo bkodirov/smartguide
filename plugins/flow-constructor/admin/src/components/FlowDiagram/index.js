@@ -29,7 +29,7 @@ export default function FlowDiagram({ data: useCase, updateSection }) {
     if (node.question && node.question.answers) {
       nodeArray.push(
         ...node.question.answers
-          .filter((answer) => answer.node_id !== undefined)
+          .filter((answer) => answer.node_id)
           .map((answer) => {
             const treeData = createData(nodeMap.get(answer.node_id));
             treeData.parent = node._id;

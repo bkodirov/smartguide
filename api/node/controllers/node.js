@@ -35,11 +35,11 @@ module.exports = {
   async create(ctx) {
     const { error } = validator.validateBody(ctx.request.body);
     if (error) {
-      ctx.send(error.details[0], 400);
+      ctx.response.send(error.details[0], 400);
       return
     }
-    await strapi.services.node.create(ctx.request.body);
-    return ctx.response.created();
+    const newNode = await strapi.services.node.create(ctx.request.body);
+    return ctx.response.created(newNode);
   },
 
   async update(ctx) {
@@ -71,7 +71,7 @@ module.exports = {
 
     const deleteEntity = await strapi.services.node.delete(use_case_id, id);
     if (deleteEntity) {
-      ctx.deleted();
+      ctx.deleted(deleteEntity);
     } else {
       ctx.send({message: `Data with id:${id} not found`}, 404)
     }
