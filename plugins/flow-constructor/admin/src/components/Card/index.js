@@ -1,10 +1,10 @@
 import React from "react";
-import { CardView, UseCaseCardView } from "./CardView";
-import { Button } from "@buffetjs/core";
+import {CardView, UseCaseCardView} from "./CardView";
+import {Button} from "@buffetjs/core";
 import pluginId from "../../pluginId";
-import { Link } from "react-router-dom";
+import {Link} from "react-router-dom";
 
-function AddCard({ edit }) {
+function AddCard({edit}) {
   return (
     <CardView>
       <div className="icon_wrapper" onClick={edit}>
@@ -26,36 +26,33 @@ function AddCard({ edit }) {
   );
 }
 
-function DataCard({ title, excerpt, edit, cardId }) {
+function DataCard({title, excerpt, edit, cardId}) {
   return (
     <CardView>
-      <Link
-        to={`/plugins/${pluginId}/cards/${cardId}`}
-        className="card_title"
-      >
+      <Link to={`/plugins/${pluginId}/cards/${cardId}`}>
         <h3>{title}</h3>
+        <div className="card_body">
+          <p>{excerpt}</p>
+        </div>
       </Link>
-      <div className="card_body">
-        <p>{excerpt}</p>
-      </div>
-      <div className="card_footer">
-        <Button color="primary" label="Edit" onClick={edit} />
-      </div>
+        <div className="card_footer">
+          <Button color="primary" label="Edit" onClick={edit}/>
+        </div>
     </CardView>
   );
 }
 
-function UseCaseCard({ title, edit, useCaseId }) {
+function UseCaseCard({title, edit, useCaseId}) {
   return (
     <UseCaseCardView>
       <Link to={`/plugins/${pluginId}/use_case/${useCaseId}`} className="card_title">
         <h3>{title}</h3>
       </Link>
       <div className="card_footer">
-        <Button color="primary" label="Edit" onClick={edit} />
+        <Button color="primary" label="Edit" onClick={edit}/>
       </div>
     </UseCaseCardView>
   );
 }
 
-export { AddCard, DataCard, UseCaseCard };
+export {AddCard, DataCard, UseCaseCard};

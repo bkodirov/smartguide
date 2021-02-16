@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, {useState} from "react";
 import {
   Modal,
   ModalFooter,
@@ -6,46 +6,23 @@ import {
   ModalHeader,
 } from "strapi-helper-plugin";
 import { Button, Flex, Label, Select } from "@buffetjs/core";
-import Context from "../../contexts/Context";
+import {prepareNodes} from "./utils";
 
-export default function LinkingNode({ nodes }) {
-  const { state, dispatch } = useContext(Context);
-  const [val, setValue] = useState("child question");
-  const [options, setOptions] = useState([]);
-
-  useEffect(() => {
-    const questions = nodes?.map((node) => {
-      return node.question.question_text;
-    });
-    setOptions(questions);
-  }, [nodes]);
-
-  const onSave = () => {
-    handleClose();
-  };
-
-  const handleToggle = () => {
-    dispatch({
-      type: "toggle_linking_modal",
-      payload: {},
-    });
-  };
-  const handleClose = () => {
-    dispatch({
-      type: "close_modal",
-    });
-  };
+export default function LinkingNode({useCase, answer, onSave, onClose, onNewNode}) {
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const {unlinkedNodes, linkedNodes, invalidQuestions, nodeMap} = prepareNodes(useCase)
+  const options = unlinkedNodes?.map(node => node.question.question_text);
 
   return (
     <Modal
-      isOpen={state?.modal?.isLinkingModalOpen}
-      onToggle={handleToggle}
-      onClosed={handleClose}
+      isOpen={true}
+      onToggle={onClose}
+      onClosed={onClose}
     >
       <ModalHeader
         withBackButton
         headerBreadcrumbs={["Linking to the question"]}
-        onClickGoBack={handleClose}
+        onClickGoBack={onClose}
       />
       <ModalBody>
         <form style={{ display: "block", width: "100%" }}>
@@ -53,11 +30,11 @@ export default function LinkingNode({ nodes }) {
             <Label htmlFor="question">Question</Label>
             <Select
               name="question"
-              onChange={({ target: { value } }) => {
-                setValue(value);
+              onChange={(event) => {
+                setSelectedIndex(event.target.selectedIndex)
               }}
               options={options}
-              value={val}
+              value={options[selectedIndex]}
             />
           </div>
         </form>
@@ -65,14 +42,16 @@ export default function LinkingNode({ nodes }) {
       <ModalFooter>
         <section>
           <Flex>
-            <Button color="primary" onClick={handleToggle} className="mr-3">
+            <Button color="primary" onClick={onNewNode} className="mr-3">
               New Question
             </Button>
-            <Button color="cancel" onClick={handleToggle} className="mr-3">
+            <Button color="cancel" onClick={onNewNode} className="mr-3">
               New Conclusion
             </Button>
           </Flex>
-          <Button color="success" onClick={onSave}>
+          <Button color="success" onClick={() => {
+            onSave(useCase.nodes[selectedIndex], answer)
+          }}>
             Save
           </Button>
         </section>

@@ -86,6 +86,7 @@ module.exports = {
     const useCase = await strapi.services['use-case'].findOne(node.use_case_id);
     useCase.nodes = useCase.nodes.filter(node => node._id !== nodeId);
     useCase.nodes.push(node)
+    const updatedUseCase = await strapi.services['use-case'].update(useCase._id, useCase);
     return node;
   },
 

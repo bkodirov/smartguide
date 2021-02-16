@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import {
   request,
   Modal,
@@ -12,43 +12,19 @@ import { Link } from "react-router-dom";
 import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import pluginId from "../../pluginId";
-import Context from "../../contexts/Context";
+import {LinkingNode} from "./index";
 
-export default function EditNode({ updateSection, parentNodeId }) {
-  const { state, dispatch } = useContext(Context);
-  const { currentData } = state?.modal;
+export default function EditNode({ updateSection, useCase, node , handleClose}) {
   const [loading, setLoading] = useState();
   const [tag, setTag] = useState("");
   const [answer, setAnswer] = useState("");
-  const [val, setValue] = useState({
-    parent_node_id: "",
-    use_case_id: "",
-    question: {
-      explanation: "",
-      question_text: "",
-      tags: [],
-      answers: [],
-    },
-    // conclusion: {
-    //   text: "",
-    //   links: [
-    //     {
-    //       text: "",
-    //       link: "",
-    //     },
-    //   ],
-    //   tags: [],
-    // },
-  });
+  const [internalState, setInternalState] = useState({useCase, linkingAnswer: undefined});
+
+  const [val, setValue] = useState(node);
 
   useEffect(() => {
-    setValue({
-      ...val,
-      parent_node_id: parentNodeId,
-      use_case_id: currentData.use_case_id,
-      question: currentData.question,
-    });
-  }, [state, parentNodeId]);
+
+  }, [internalState]);
 
   const addTags = () => {
     if (tag === "") {
@@ -93,7 +69,7 @@ export default function EditNode({ updateSection, parentNodeId }) {
   const updateNode = async () => {
     setLoading(true);
     try {
-      await request(`/nodes/${currentData._id}`, {
+      await request(`/nodes/${node._id}`, {
         method: "PUT",
         body: val,
       });
@@ -111,7 +87,7 @@ export default function EditNode({ updateSection, parentNodeId }) {
   const deleteNode = async () => {
     setLoading(true);
     try {
-      await request(`/nodes/${currentData._id}`, {
+      await request(`/nodes/${node._id}`, {
         method: "DELETE",
       });
       setLoading(false);
@@ -125,145 +101,159 @@ export default function EditNode({ updateSection, parentNodeId }) {
     }
   };
 
-  const handleToggle = () => {
-    dispatch({
-      type: "toggle_edit_modal",
-      payload: {},
-    });
-  };
-  const handleClose = () => {
-    dispatch({
-      type: "close_modal",
-    });
+
+  const handleAnswer = (answer) => {
+    // If a new Answer created ask for save
+    // if (dirtyAnswerExists) {
+    //   strapi.notification.show('Please save the node changes first')
+    // }
+    setInternalState({...internalState, linkingAnswer: answer})
   };
 
-  const handleAnswer = (event, answer) => {
-    event.stopPropagation();
-    dispatch({ type: "toggle_linking_modal", payload: answer });
-  };
-
+  console.log(`Re-rendering a view. linking = ${internalState.linkingAnswer}`)
   return (
-    <Modal
-      isOpen={state?.modal?.isEditModalOpen}
-      onToggle={handleToggle}
-      onClosed={handleClose}
-    >
-      <ModalHeader
-        withBackButton
-        headerBreadcrumbs={["Question"]}
-        onClickGoBack={handleClose}
-      />
-      <ModalBody>
-        <form style={{ display: "block", width: "100%" }}>
-          <div className="col-md-6 mb-5">
-            <Label htmlFor="explanation">Explanation</Label>
-            <InputText
-              name="explanation"
-              onChange={({ target: { value } }) => {
-                setValue({
-                  ...val,
-                  question: { ...val.question, explanation: value },
-                });
-              }}
-              type="text"
-              value={val.question?.explanation}
-            />
-          </div>
-          <div className="col-md-6 mb-5">
-            <Label htmlFor="question_text">Question</Label>
-            <InputText
-              name="question_text"
-              onChange={({ target: { value } }) => {
-                setValue({
-                  ...val,
-                  question: { ...val.question, question_text: value },
-                });
-              }}
-              type="text"
-              value={val.question?.question_text}
-            />
-          </div>
-          <div className="col-md-6 mb-3">
-            <Label htmlFor="answer">Answers</Label>
-            <InputText
-              name="answer"
-              onChange={({ target: { value } }) => {
-                setAnswer(value);
-              }}
-              placeholder="Add new answer"
-              type="text"
-              value={answer}
-              onKeyPress={(event) => {
-                if (event.key === "Enter") {
-                  addAnswer();
-                }
-              }}
-            />
-          </div>
-          <div className="col-md-6 mb-5">
-            {val.question?.answers?.map((item, index) => (
-              <Answer key={index}>
-                <Link
-                  to={`/plugins/${pluginId}/use_case/${val.use_case_id}`}
-                  onClick={(event) => handleAnswer(event, item)}
-                >
-                  {item.text}
-                </Link>
-                <FontAwesomeIcon
-                  icon={faTrashAlt}
-                  onClick={() => deleteAnswer(item.text)}
-                />
-              </Answer>
-            ))}
-          </div>
-          <div className="col-md-12">
-            <Label htmlFor="tag">Tags</Label>
-            <div style={{ display: "flex", flexWrap: "wrap" }}>
-              {val.question?.tags?.map((tag, index) => (
-                <Option
-                  key={index}
-                  label={tag}
-                  margin="0 10px 6px 0"
-                  onClick={() => deleteTag(tag)}
-                />
+    <>
+      <Modal
+        isOpen={true}
+        onToggle={handleClose}
+        onClosed={handleClose}
+      >
+        <ModalHeader
+          withBackButton
+          headerBreadcrumbs={["Question"]}
+          onClickGoBack={handleClose}
+        />
+        <ModalBody>
+          <form style={{ display: "block", width: "100%" }}>
+            <div className="col-md-6 mb-5">
+              <Label htmlFor="explanation">Explanation</Label>
+              <InputText
+                name="explanation"
+                onChange={({ target: { value } }) => {
+                  setValue({
+                    ...val,
+                    question: { ...val.question, explanation: value },
+                  });
+                }}
+                type="text"
+                value={val.question?.explanation}
+              />
+            </div>
+            <div className="col-md-6 mb-5">
+              <Label htmlFor="question_text">Question</Label>
+              <InputText
+                name="question_text"
+                onChange={({ target: { value } }) => {
+                  setValue({
+                    ...val,
+                    question: { ...val.question, question_text: value },
+                  });
+                }}
+                type="text"
+                value={val.question?.question_text}
+              />
+            </div>
+            <div className="col-md-6 mb-3">
+              <Label htmlFor="answer">Answers</Label>
+              <InputText
+                name="answer"
+                onChange={({ target: { value } }) => {
+                  setAnswer(value);
+                }}
+                placeholder="Add new answer"
+                type="text"
+                value={answer}
+                onKeyPress={(event) => {
+                  if (event.key === "Enter") {
+                    addAnswer();
+                  }
+                }}
+              />
+            </div>
+            <div className="col-md-6 mb-5">
+              {val.question?.answers?.map((item, index) => (
+                <Answer key={index}>
+                  <Link
+                    to={`/plugins/${pluginId}/use_case/${val.use_case_id}`}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      handleAnswer(item)
+                    }}
+                  >
+                    {item.text}
+                  </Link>
+                  <FontAwesomeIcon
+                    icon={faTrashAlt}
+                    onClick={() => deleteAnswer(item.text)}
+                  />
+                </Answer>
               ))}
             </div>
-            <div className="row">
-              <div className="col-md-6">
-                <InputText
-                  name="tag"
-                  onChange={({ target: { value } }) => {
-                    setTag(value);
-                  }}
-                  placeholder="tags..."
-                  type="text"
-                  value={tag}
-                  onKeyPress={(event) => {
-                    if (event.key === "Enter") {
-                      addTags();
-                    }
-                  }}
-                />
+            <div className="col-md-12">
+              <Label htmlFor="tag">Tags</Label>
+              <div style={{ display: "flex", flexWrap: "wrap" }}>
+                {val.question?.tags?.map((tag, index) => (
+                  <Option
+                    key={index}
+                    label={tag}
+                    margin="0 10px 6px 0"
+                    onClick={() => deleteTag(tag)}
+                  />
+                ))}
+              </div>
+              <div className="row">
+                <div className="col-md-6">
+                  <InputText
+                    name="tag"
+                    onChange={({ target: { value } }) => {
+                      setTag(value);
+                    }}
+                    placeholder="tags..."
+                    type="text"
+                    value={tag}
+                    onKeyPress={(event) => {
+                      if (event.key === "Enter") {
+                        addTags();
+                      }
+                    }}
+                  />
+                </div>
               </div>
             </div>
-          </div>
-        </form>
-      </ModalBody>
-      <ModalFooter>
-        <section>
-          <Flex>
-            <Button color="cancel" onClick={handleToggle} className="mr-3">
-              Cancel
+          </form>
+        </ModalBody>
+        <ModalFooter>
+          <section>
+            <Flex>
+              <Button color="cancel" onClick={handleClose} className="mr-3">
+                Cancel
+              </Button>
+              <Button color="delete" onClick={deleteNode}>
+                Delete
+              </Button>
+            </Flex>
+            <Button color="success" onClick={updateNode} isLoading={loading}>
+              Save
             </Button>
-            <Button color="delete" onClick={deleteNode}>
-              Delete
-            </Button>
-          </Flex>
-          <Button color="success" onClick={updateNode} isLoading={loading}>
-            Save
-          </Button>
-        </section>
-      </ModalFooter>
-    </Modal>
+          </section>
+        </ModalFooter>
+      </Modal>
+      {
+        internalState.linkingAnswer && <LinkingNode
+          useCase={useCase}
+          answer={internalState.linkingAnswer}
+          onSave={(node, answer) => {
+            answer.node_id = node._id
+            setInternalState({...internalState, linkingAnswer: undefined})
+            updateNode()
+            setLoading(true)
+          }}
+          onClose={(event) => {
+            setInternalState({...internalState, linkingAnswer: undefined})
+          }}
+          onNewNode={() => console.log('onNewNode')}
+        />
+      }
+    </>
   );
 }

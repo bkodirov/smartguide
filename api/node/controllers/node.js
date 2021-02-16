@@ -49,11 +49,16 @@ module.exports = {
     if (bodyValidation.error) return ctx.send(bodyValidation.error.details[0], 400);
     if (idValidation.error) return ctx.send(idValidation.error.details[0], 400);
 
-    const updated = await strapi.services.node.update(id, ctx.request.body);
-    if (updated) {
-      ctx.send({message: `Record with id:${id} updated`});
-    } else {
-      ctx.send({message: `Data with id:${id} not found`}, 404)
+    try {
+      const updated = await strapi.services.node.update(id, ctx.request.body);
+      if (updated) {
+        ctx.send({message: `Record with id:${id} updated`});
+      } else {
+        ctx.send({message: `Data with id:${id} not found`}, 404)
+      }
+    } catch (e) {
+      console.error(e)
+      ctx.send({message: `Server app run into an issue`}, 500)
     }
   },
 
