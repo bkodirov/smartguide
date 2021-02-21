@@ -73,6 +73,15 @@ export const CardView = styled.div`
     flex-direction: row-reverse;
     cursor: initial;
   }
+  a {
+    display: block;
+    &:hover {
+      text-decoration: none;
+      h3 {
+        text-decoration: underline;
+      }
+    }
+  }
 `;
 
 export const UseCaseCardView = styled.div`

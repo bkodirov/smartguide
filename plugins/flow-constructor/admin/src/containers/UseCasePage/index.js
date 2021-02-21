@@ -1,17 +1,17 @@
-import React, { memo, useState, useEffect, useContext } from "react";
+import React, { memo, useState, useEffect } from "react";
 import { request } from "strapi-helper-plugin";
 import Background from "../../components/Card/Background";
 import Container from "../../components/Card/CardContainer";
 import { Header } from "@buffetjs/custom";
 import { useParams } from "react-router-dom";
-import NodeSection from "../NodeSection";
-import Context from "../../contexts/Context";
+import FlowDiagram from "../../components/FlowDiagram";
+import { AddNode } from "../../components/Node";
 
 function UseCasePage() {
-  const { state, dispatch } = useContext(Context);
   const params = useParams();
   const [loading, setLoading] = useState(true);
   const [useCase, setUseCase] = useState({});
+  const [addingNode, updateAddingNode] = useState(false);
 
   const getUseCaseDetail = async () => {
     setLoading(true);
@@ -44,7 +44,7 @@ function UseCasePage() {
             actions={[
               {
                 label: "Create a Node",
-                onClick: () => dispatch({ type: "toggle_add_modal" }),
+                onClick: () => updateAddingNode(true),
                 color: "primary",
                 type: "submit",
                 icon: true,
@@ -52,9 +52,18 @@ function UseCasePage() {
             ]}
           />
           {!loading && (
-            <NodeSection
+            <FlowDiagram
               data={useCase}
               updateSection={() => getUseCaseDetail()}
+            />
+          )}
+          {addingNode && (
+            <AddNode
+              updateSection={() => getUseCaseDetail()}
+              useCaseId={useCase._id}
+              nodes={useCase.nodes}
+              tags={useCase.tags}
+              handleClose={() => updateAddingNode(false)}
             />
           )}
         </div>

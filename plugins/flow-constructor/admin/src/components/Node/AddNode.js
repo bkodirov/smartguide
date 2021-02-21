@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import {
   request,
   Modal,
@@ -6,13 +6,12 @@ import {
   ModalBody,
   ModalHeader,
 } from "strapi-helper-plugin";
-import { Button, Flex, InputText, Label, Option } from "@buffetjs/core";
+import { Button, Flex, InputText, Label, Option, Select } from "@buffetjs/core";
 import { Answer } from "./Answer";
 import { Link } from "react-router-dom";
-import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import { faTrashAlt, faUnlink } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import pluginId from "../../pluginId";
-import Context from "../../contexts/Context";
 
 export default function AddNode({
   updateSection,
@@ -20,13 +19,13 @@ export default function AddNode({
   parentNodeId,
   answerId,
   tags,
+  handleClose,
 }) {
-  const { state, dispatch } = useContext(Context);
   const [loading, setLoading] = useState();
   const [tag, setTag] = useState("");
   const [answer, setAnswer] = useState("");
   const [link, setLink] = useState("");
-  const [conclusion, setConclusion] = useState(false);
+  const [nodeType, setNodeType] = useState("Question");
   const [val, setValue] = useState({
     parentNodeId,
     answerId,
@@ -56,10 +55,18 @@ export default function AddNode({
     if (tag === "") {
       return;
     }
-    setValue({
-      ...val,
-      question: { ...val.question, tags: [...val.question.tags, tag] },
-    });
+    
+    if (nodeType === "Conclusion") {
+      setValue({
+        ...val,
+        conclusion: { ...val.conclusion, tags: [...val.conclusion.tags, tag] },
+      });
+    } else {
+      setValue({
+        ...val,
+        question: { ...val.question, tags: [...val.question.tags, tag] },
+      });
+    }
     setTag("");
   };
 
@@ -100,15 +107,15 @@ export default function AddNode({
       ...val,
       conclusion: {
         ...val.conclusion,
-        links: [...val.conclusion.links, { text: link }],
+        links: [...val.conclusion.links, { text: link, link }],
       },
     });
     setLink("");
   };
 
   const deleteLink = (text) => {
-    const filteredLinks = val.conclusion.text.filter(
-      (link) => link.text !== text
+    const filteredLinks = val.conclusion.links.filter(
+      (link) => link.link !== text
     );
     setValue({
       ...val,
@@ -132,7 +139,7 @@ export default function AddNode({
     try {
       await request("/nodes", {
         method: "POST",
-        body: conclusion ? conclusionData : questionData,
+        body: nodeType === "Conclusion" ? conclusionData : questionData,
       });
       setLoading(false);
       strapi.notification.success("Created");
@@ -145,36 +152,31 @@ export default function AddNode({
     }
   };
 
-  const handleToggle = () => {
-    dispatch({
-      type: "toggle_add_modal",
-    });
-  };
-  const handleClose = () => {
-    dispatch({
-      type: "close_modal",
-    });
-  };
-
-  const handleAnswer = (event, answer) => {
-    event.stopPropagation();
-    dispatch({ type: "toggle_linking_modal", payload: answer });
+  const handleAnswer = () => {
+    strapi.notification.info("Please save the node changes first");
   };
 
   return (
     <>
-      <Modal
-        isOpen={state?.modal?.isAddModalOpen}
-        onToggle={handleToggle}
-        onClosed={handleClose}
-      >
+      <Modal isOpen={true} onToggle={handleClose} onClosed={handleClose}>
         <ModalHeader
           withBackButton
-          headerBreadcrumbs={[`${conclusion ? `Conclusion` : `Question`}`]}
+          headerBreadcrumbs={[nodeType]}
           onClickGoBack={handleClose}
         />
         <ModalBody>
-          {conclusion ? (
+          <div className="col-md-6 mb-5">
+            <Label htmlFor="node_type">Node type</Label>
+            <Select
+              name="node_type"
+              onChange={({ target: { value } }) => {
+                setNodeType(value);
+              }}
+              options={["Question", "Conclusion"]}
+              value={nodeType}
+            />
+          </div>
+          {nodeType === "Conclusion" ? (
             <form style={{ display: "block", width: "100%" }}>
               <div className="col-md-6 mb-5">
                 <Label htmlFor="conclusion">Conclusion</Label>
@@ -207,23 +209,25 @@ export default function AddNode({
                   }}
                 />
               </div>
-              <div className="col-md-6 mb-5">
+              <div className="col-md-12 mb-5">
                 {val.conclusion.links?.map((item, index) => (
                   <Answer key={index}>
-                    <Link to={`/plugins/${pluginId}/use_case/${useCaseId}`}>
-                      {item.text}
-                    </Link>
-                    <FontAwesomeIcon
-                      icon={faTrashAlt}
-                      onClick={() => deleteLink(item.text)}
-                    />
+                    <div className="answer_block">
+                      <Link to={`/plugins/${pluginId}/use_case/${useCaseId}`}>
+                        {item.text}
+                      </Link>
+                      <FontAwesomeIcon
+                        icon={faTrashAlt}
+                        onClick={() => deleteLink(item.text)}
+                      />
+                    </div>
                   </Answer>
                 ))}
               </div>
               <div className="col-md-12">
                 <Label htmlFor="tag">Tags</Label>
                 <div style={{ display: "flex", flexWrap: "wrap" }}>
-                  {val.question.tags?.map((tag, index) => (
+                  {val.conclusion.tags?.map((tag, index) => (
                     <Option
                       key={index}
                       label={tag}
@@ -299,19 +303,31 @@ export default function AddNode({
                   }}
                 />
               </div>
-              <div className="col-md-6 mb-5">
+              <div className="col-md-12 mb-5">
                 {val.question.answers?.map((item, index) => (
-                  <Answer key={index}>
-                    <Link
-                      to={`/plugins/${pluginId}/use_case/${useCaseId}`}
-                      onClick={(event) => handleAnswer(event, item)}
-                    >
-                      {item.text}
-                    </Link>
-                    <FontAwesomeIcon
-                      icon={faTrashAlt}
-                      onClick={() => deleteAnswer(item.text)}
-                    />
+                  <Answer key={index} color="#F64D0A">
+                    <div className="answer_block">
+                      <Link
+                        to={`/plugins/${pluginId}/use_case/${val.use_case_id}`}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          handleAnswer(item);
+                        }}
+                      >
+                        {item.text}
+                      </Link>
+                      <FontAwesomeIcon
+                        icon={faTrashAlt}
+                        onClick={() => deleteAnswer(item.text)}
+                      />
+                      <FontAwesomeIcon
+                        icon={faUnlink}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          handleAnswer(item);
+                        }}
+                      />
+                    </div>
                   </Answer>
                 ))}
               </div>
@@ -352,7 +368,7 @@ export default function AddNode({
         <ModalFooter>
           <section>
             <Flex>
-              <Button color="cancel" onClick={handleToggle} className="mr-3">
+              <Button color="cancel" onClick={handleClose} className="mr-3">
                 Cancel
               </Button>
             </Flex>

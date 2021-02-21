@@ -43,36 +43,10 @@ function SectionPage() {
           />
           {!loading && (
             <CardSection
-              data={{parent_section: section}}
+              data={{ parent_section: section }}
               updateSection={() => getSectionDetail()}
             />
           )}
-
-          {/* <div className="row">
-            <Block title="Tags" description="" style={{ marginBottom: 24 }}>
-              <div style={{ display: "flex", flexWrap: "wrap" }}>
-                <Option label="Tag" margin="0 10px 6px 0" />
-                {tags.map((tag, index) => (
-                  <Option key={index} label={tag} margin="0 10px 6px 0" />
-                ))}
-              </div>
-              <div className="row">
-                <div className="col-md-6">
-                  <form onSubmit={addTags}>
-                    <InputText
-                      name="tag"
-                      onChange={({ target: { value } }) => {
-                        setValue(value);
-                      }}
-                      placeholder="tags..."
-                      type="text"
-                      value={val}
-                    />
-                  </form>
-                </div>
-              </div>
-            </Block>
-          </div> */}
         </div>
       </Container>
     </Background>
