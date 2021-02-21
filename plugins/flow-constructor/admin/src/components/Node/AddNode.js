@@ -9,7 +9,7 @@ import {
 import { Button, Flex, InputText, Label, Option, Select } from "@buffetjs/core";
 import { Answer } from "./Answer";
 import { Link } from "react-router-dom";
-import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import { faTrashAlt, faUnlink } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import pluginId from "../../pluginId";
 import Context from "../../contexts/Context";
@@ -156,9 +156,8 @@ export default function AddNode({
     });
   };
 
-  const handleAnswer = (event, answer) => {
-    event.stopPropagation();
-    dispatch({ type: "toggle_linking_modal", payload: answer });
+  const handleAnswer = () => {
+    strapi.notification.info("Please save the node changes first");
   };
 
   return (
@@ -218,16 +217,18 @@ export default function AddNode({
                   }}
                 />
               </div>
-              <div className="col-md-6 mb-5">
+              <div className="col-md-12 mb-5">
                 {val.conclusion.links?.map((item, index) => (
                   <Answer key={index}>
-                    <Link to={`/plugins/${pluginId}/use_case/${useCaseId}`}>
-                      {item.text}
-                    </Link>
-                    <FontAwesomeIcon
-                      icon={faTrashAlt}
-                      onClick={() => deleteLink(item.text)}
-                    />
+                    <div className="answer_block">
+                      <Link to={`/plugins/${pluginId}/use_case/${useCaseId}`}>
+                        {item.text}
+                      </Link>
+                      <FontAwesomeIcon
+                        icon={faTrashAlt}
+                        onClick={() => deleteLink(item.text)}
+                      />
+                    </div>
                   </Answer>
                 ))}
               </div>
@@ -310,19 +311,31 @@ export default function AddNode({
                   }}
                 />
               </div>
-              <div className="col-md-6 mb-5">
+              <div className="col-md-12 mb-5">
                 {val.question.answers?.map((item, index) => (
-                  <Answer key={index}>
-                    <Link
-                      to={`/plugins/${pluginId}/use_case/${useCaseId}`}
-                      onClick={(event) => handleAnswer(event, item)}
-                    >
-                      {item.text}
-                    </Link>
-                    <FontAwesomeIcon
-                      icon={faTrashAlt}
-                      onClick={() => deleteAnswer(item.text)}
-                    />
+                  <Answer key={index} color="#F64D0A">
+                    <div className="answer_block">
+                      <Link
+                        to={`/plugins/${pluginId}/use_case/${val.use_case_id}`}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          handleAnswer(item);
+                        }}
+                      >
+                        {item.text}
+                      </Link>
+                      <FontAwesomeIcon
+                        icon={faTrashAlt}
+                        onClick={() => deleteAnswer(item.text)}
+                      />
+                      <FontAwesomeIcon
+                        icon={faUnlink}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          handleAnswer(item);
+                        }}
+                      />
+                    </div>
                   </Answer>
                 ))}
               </div>

@@ -5,6 +5,7 @@ import {
   ModalFooter,
   ModalBody,
   ModalHeader,
+  PopUpWarning,
 } from "strapi-helper-plugin";
 import { Button, Flex, InputText, Label, Option } from "@buffetjs/core";
 import { Answer } from "./Answer";
@@ -13,6 +14,7 @@ import {
   faTrashAlt,
   faLink,
   faUnlink,
+  faLongArrowAltRight,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import pluginId from "../../pluginId";
@@ -76,6 +78,12 @@ export default function EditNode({
     });
   };
 
+  const unlinkAnswer = (answer) => {
+    answer.node_id = "";
+    setValue({ ...val }); // for repeated rendering
+  };
+  console.log("val => ", val);
+
   const addLink = () => {
     if (link === "") {
       return;
@@ -135,6 +143,14 @@ export default function EditNode({
     }
   };
 
+  const isLinkedAnswer = (answer) => {
+    if (answer.hasOwnProperty("node_id") && !(answer.node_id === "")) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   const handleAnswer = (answer) => {
     // If a new Answer created ask for save
     if (answer.hasOwnProperty("_id")) {
@@ -144,14 +160,24 @@ export default function EditNode({
     }
   };
 
+  const closeModal = () => {
+    if (val === node) {
+      handleClose();
+    } else {
+      strapi.notification.info(
+        "Please save your node changes first. If you don't want to save the changes, click Cancel"
+      );
+    }
+  };
+
   console.log(`Re-rendering a view. linking = ${internalState.linkingAnswer}`);
   return (
     <>
-      <Modal isOpen={true} onToggle={handleClose} onClosed={handleClose}>
+      <Modal isOpen={true} onToggle={closeModal} onClosed={handleClose}>
         <ModalHeader
           withBackButton
           headerBreadcrumbs={[nodeType]}
-          onClickGoBack={handleClose}
+          onClickGoBack={closeModal}
         />
         <ModalBody>
           {nodeType === "Conclusion" ? (
@@ -187,16 +213,18 @@ export default function EditNode({
                   }}
                 />
               </div>
-              <div className="col-md-6 mb-5">
+              <div className="col-md-12 mb-5">
                 {val.conclusion.links?.map((item, index) => (
                   <Answer key={index}>
-                    <Link to={`/plugins/${pluginId}/use_case/${useCase._id}`}>
-                      {item.text}
-                    </Link>
-                    <FontAwesomeIcon
-                      icon={faTrashAlt}
-                      onClick={() => deleteLink(item.text)}
-                    />
+                    <div className="answer_block">
+                      <Link to={`/plugins/${pluginId}/use_case/${useCase._id}`}>
+                        {item.text}
+                      </Link>
+                      <FontAwesomeIcon
+                        icon={faTrashAlt}
+                        onClick={() => deleteLink(item.text)}
+                      />
+                    </div>
                   </Answer>
                 ))}
               </div>
@@ -279,22 +307,48 @@ export default function EditNode({
                   }}
                 />
               </div>
-              <div className="col-md-6 mb-5">
+              <div className="col-md-12 mb-5">
                 {val.question?.answers?.map((item, index) => (
-                  <Answer key={index}>
-                    <Link
-                      to={`/plugins/${pluginId}/use_case/${val.use_case_id}`}
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        handleAnswer(item);
-                      }}
-                    >
-                      {item.text}
-                    </Link>
-                    <FontAwesomeIcon
-                      icon={faTrashAlt}
-                      onClick={() => deleteAnswer(item.text)}
-                    />
+                  <Answer key={index} color="#F64D0A">
+                    <div className="answer_block">
+                      <Link
+                        to={`/plugins/${pluginId}/use_case/${val.use_case_id}`}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          handleAnswer(item);
+                        }}
+                      >
+                        {item.text}
+                      </Link>
+                      <FontAwesomeIcon
+                        icon={faTrashAlt}
+                        onClick={() => deleteAnswer(item.text)}
+                      />
+                      {isLinkedAnswer(item) ? (
+                        <FontAwesomeIcon
+                          icon={faLink}
+                          onClick={() => unlinkAnswer(item)}
+                        />
+                      ) : (
+                        <FontAwesomeIcon
+                          icon={faUnlink}
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            handleAnswer(item);
+                          }}
+                        />
+                      )}
+                    </div>
+                    {isLinkedAnswer(item) ? (
+                      <>
+                        <span className="arrow">
+                          <FontAwesomeIcon icon={faLongArrowAltRight} />
+                        </span>
+                        <div className="node_card">Question or Conclusion</div>
+                      </>
+                    ) : (
+                      ""
+                    )}
                   </Answer>
                 ))}
               </div>
