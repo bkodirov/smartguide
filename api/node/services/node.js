@@ -98,8 +98,15 @@ module.exports = {
     // If there is a valid Use case
     if (useCase) {
       if (useCase.head_node_id === nodeId) {
-        nodeToDelete = useCase.head_node
-        useCase.head_node = null;
+        useCase.head_node_id = null;
+        useCase.nodes = useCase.nodes.filter(item => {
+          if (item._id !== nodeId) {
+            return true
+          } else {
+            nodeToDelete = item;
+            return false
+          }
+        })
       } else {
         useCase.nodes.forEach(node => {
           node.question && node.question.answers.forEach(answer => {
@@ -117,8 +124,8 @@ module.exports = {
           return !shouldDelete;
         })
       }
-      await strapi.services['use-case'].update(useCase._id, useCase);
     }
+    await strapi.services['use-case'].update(useCase._id, useCase);
     return nodeToDelete;
   },
 };
