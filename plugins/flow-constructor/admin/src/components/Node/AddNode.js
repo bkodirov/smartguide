@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import {
   request,
   Modal,
@@ -12,7 +12,6 @@ import { Link } from "react-router-dom";
 import { faTrashAlt, faUnlink } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import pluginId from "../../pluginId";
-import Context from "../../contexts/Context";
 
 export default function AddNode({
   updateSection,
@@ -20,8 +19,8 @@ export default function AddNode({
   parentNodeId,
   answerId,
   tags,
+  handleClose,
 }) {
-  const { state, dispatch } = useContext(Context);
   const [loading, setLoading] = useState();
   const [tag, setTag] = useState("");
   const [answer, setAnswer] = useState("");
@@ -56,10 +55,18 @@ export default function AddNode({
     if (tag === "") {
       return;
     }
-    setValue({
-      ...val,
-      question: { ...val.question, tags: [...val.question.tags, tag] },
-    });
+    
+    if (nodeType === "Conclusion") {
+      setValue({
+        ...val,
+        conclusion: { ...val.conclusion, tags: [...val.conclusion.tags, tag] },
+      });
+    } else {
+      setValue({
+        ...val,
+        question: { ...val.question, tags: [...val.question.tags, tag] },
+      });
+    }
     setTag("");
   };
 
@@ -145,28 +152,13 @@ export default function AddNode({
     }
   };
 
-  const handleToggle = () => {
-    dispatch({
-      type: "toggle_add_modal",
-    });
-  };
-  const handleClose = () => {
-    dispatch({
-      type: "close_modal",
-    });
-  };
-
   const handleAnswer = () => {
     strapi.notification.info("Please save the node changes first");
   };
 
   return (
     <>
-      <Modal
-        isOpen={state?.modal?.isAddModalOpen}
-        onToggle={handleToggle}
-        onClosed={handleClose}
-      >
+      <Modal isOpen={true} onToggle={handleClose} onClosed={handleClose}>
         <ModalHeader
           withBackButton
           headerBreadcrumbs={[nodeType]}
@@ -376,7 +368,7 @@ export default function AddNode({
         <ModalFooter>
           <section>
             <Flex>
-              <Button color="cancel" onClick={handleToggle} className="mr-3">
+              <Button color="cancel" onClick={handleClose} className="mr-3">
                 Cancel
               </Button>
             </Flex>

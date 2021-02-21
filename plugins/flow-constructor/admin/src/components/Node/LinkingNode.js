@@ -11,7 +11,7 @@ import {prepareNodes} from "./utils";
 export default function LinkingNode({useCase, answer, onSave, onClose, onNewNode}) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const {unlinkedNodes, linkedNodes, invalidQuestions, nodeMap} = prepareNodes(useCase)
-  const options = unlinkedNodes?.map(node => node.question.question_text);
+  const options = unlinkedNodes?.map(node => node.question ? node.question?.question_text : node.conclusion?.text);
 
   return (
     <Modal

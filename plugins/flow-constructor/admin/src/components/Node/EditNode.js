@@ -5,7 +5,6 @@ import {
   ModalFooter,
   ModalBody,
   ModalHeader,
-  PopUpWarning,
 } from "strapi-helper-plugin";
 import { Button, Flex, InputText, Label, Option } from "@buffetjs/core";
 import { Answer } from "./Answer";
@@ -42,10 +41,18 @@ export default function EditNode({
     if (tag === "") {
       return;
     }
-    setValue({
-      ...val,
-      question: { ...val.question, tags: [...val.question.tags, tag] },
-    });
+
+    if (nodeType === "Conclusion") {
+      setValue({
+        ...val,
+        conclusion: { ...val.conclusion, tags: [...val.conclusion.tags, tag] },
+      });
+    } else {
+      setValue({
+        ...val,
+        question: { ...val.question, tags: [...val.question.tags, tag] },
+      });
+    }
     setTag("");
   };
 
@@ -78,11 +85,22 @@ export default function EditNode({
     });
   };
 
-  const unlinkAnswer = (answer) => {
-    answer.node_id = "";
-    setValue({ ...val }); // for repeated rendering
+  const unlinkAnswer = (data) => {
+    const filteredAnswers = val.question.answers.filter(
+      (answer) => answer !== data
+    );
+    const unlinkedAnswer = {
+      _id: data._id,
+      text: data.text,
+    };
+    setValue({
+      ...val,
+      question: {
+        ...val.question,
+        answers: [...filteredAnswers, unlinkedAnswer],
+      },
+    });
   };
-  console.log("val => ", val);
 
   const addLink = () => {
     if (link === "") {

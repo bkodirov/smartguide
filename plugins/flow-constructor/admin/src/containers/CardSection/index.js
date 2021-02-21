@@ -3,7 +3,7 @@ import { DataCard } from "../../components/Card";
 import Block from "../../components/Block";
 import { AddCard, EditCard } from "../../components/SubSection";
 
-export default function CardSection({ data, updateSection, recursive }) {
+export default function CardSection({ data, updateSection }) {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [currentCard, setCurrentCard] = useState({});
