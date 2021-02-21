@@ -6,7 +6,7 @@ import {
   ModalBody,
   ModalHeader,
 } from "strapi-helper-plugin";
-import { Button, Flex, InputText, Label, Option } from "@buffetjs/core";
+import { Button, Flex, InputText, Label, Option, Select } from "@buffetjs/core";
 import { Answer } from "./Answer";
 import { Link } from "react-router-dom";
 import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
@@ -26,7 +26,7 @@ export default function AddNode({
   const [tag, setTag] = useState("");
   const [answer, setAnswer] = useState("");
   const [link, setLink] = useState("");
-  const [conclusion, setConclusion] = useState(false);
+  const [nodeType, setNodeType] = useState("Question");
   const [val, setValue] = useState({
     parentNodeId,
     answerId,
@@ -100,15 +100,15 @@ export default function AddNode({
       ...val,
       conclusion: {
         ...val.conclusion,
-        links: [...val.conclusion.links, { text: link }],
+        links: [...val.conclusion.links, { text: link, link }],
       },
     });
     setLink("");
   };
 
   const deleteLink = (text) => {
-    const filteredLinks = val.conclusion.text.filter(
-      (link) => link.text !== text
+    const filteredLinks = val.conclusion.links.filter(
+      (link) => link.link !== text
     );
     setValue({
       ...val,
@@ -132,7 +132,7 @@ export default function AddNode({
     try {
       await request("/nodes", {
         method: "POST",
-        body: conclusion ? conclusionData : questionData,
+        body: nodeType === "Conclusion" ? conclusionData : questionData,
       });
       setLoading(false);
       strapi.notification.success("Created");
@@ -170,11 +170,22 @@ export default function AddNode({
       >
         <ModalHeader
           withBackButton
-          headerBreadcrumbs={[`${conclusion ? `Conclusion` : `Question`}`]}
+          headerBreadcrumbs={[nodeType]}
           onClickGoBack={handleClose}
         />
         <ModalBody>
-          {conclusion ? (
+          <div className="col-md-6 mb-5">
+            <Label htmlFor="node_type">Node type</Label>
+            <Select
+              name="node_type"
+              onChange={({ target: { value } }) => {
+                setNodeType(value);
+              }}
+              options={["Question", "Conclusion"]}
+              value={nodeType}
+            />
+          </div>
+          {nodeType === "Conclusion" ? (
             <form style={{ display: "block", width: "100%" }}>
               <div className="col-md-6 mb-5">
                 <Label htmlFor="conclusion">Conclusion</Label>
