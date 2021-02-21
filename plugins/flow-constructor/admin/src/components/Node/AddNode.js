@@ -234,7 +234,7 @@ export default function AddNode({
               <div className="col-md-12">
                 <Label htmlFor="tag">Tags</Label>
                 <div style={{ display: "flex", flexWrap: "wrap" }}>
-                  {val.question.tags?.map((tag, index) => (
+                  {val.conclusion.tags?.map((tag, index) => (
                     <Option
                       key={index}
                       label={tag}
