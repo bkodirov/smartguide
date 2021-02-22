@@ -235,7 +235,13 @@ export default function EditNode({
                 {val.conclusion.links?.map((item, index) => (
                   <Answer key={index}>
                     <div className="answer_block">
-                      <Link to={`/plugins/${pluginId}/use_case/${useCase._id}`}>
+                      <Link
+                        to={`/plugins/${pluginId}/use_case/${useCase._id}`}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          handleAnswer(item);
+                        }}
+                      >
                         {item.text}
                       </Link>
                       <FontAwesomeIcon

@@ -11,5 +11,5 @@
  */
 
 module.exports = () => {
-
+  strapi.connections.mongo.connection.db.collection('articles').createIndex( { text: "text", articleId: "text" } )
 };

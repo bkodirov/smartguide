@@ -6,7 +6,7 @@ const sectionRepo = require('../../section/services/repo');
  * Read the documentation (https://strapi.io/documentation/v3.x/concepts/services.html#core-services)
  * to customize this service
  */
-
+const cardTypes = ['Topic', 'Subtopic', 'Section', 'Paragraph', 'Wording'];
 async function populateCard(dbCard) {
   dbCard.cards = await Promise.all(dbCard.cards.map(cardId => find(cardId)));
   dbCard.use_cases = await Promise.all(dbCard.use_cases.map(useCaseId => strapi.services["use-case"].findOne(useCaseId, false)));
@@ -37,6 +37,22 @@ module.exports = {
       if (!parentCard.cards) {
         parentCard.cards = [ ];
       }
+      if (!cardToCreate.type) {
+        let assignedType = cardTypes[0];
+        if (parentCard.type) {
+          const typeIndex = cardTypes.indexOf(parentCard.type)
+          if (typeIndex === -1) {
+            assignedType = cardTypes[0];
+          } else if (typeIndex === cardTypes.length -1) {
+            assignedType = cardTypes[cardTypes.length -1];
+          } else {
+            assignedType = cardTypes[typeIndex + 1];
+          }
+        } else {
+          assignedType = cardTypes[0];
+        }
+        cardToCreate.type = assignedType;
+      }
       card = await create(cardToCreate);
       parentCard.cards.push(card);
       await this.update(cardToCreate.parent_card_id, parentCard);
@@ -45,6 +61,9 @@ module.exports = {
       if (!section) throw Error(`Section with id=${cardToCreate.section_id} not found`);
       if (!section.cards) {
         section.cards = []
+      }
+      if (!cardToCreate.type) {
+        cardToCreate.type = cardTypes[0];
       }
       card = await create(cardToCreate);
       section.cards.push(card);

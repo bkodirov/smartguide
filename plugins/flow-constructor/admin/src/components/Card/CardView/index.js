@@ -1,5 +1,20 @@
 import styled from "styled-components";
 
+const cardColorMap = {
+  'Topic': 'brown',
+  'Subtopic': 'purple',
+  'Section': 'dodgerblue',
+  'Paragraph': 'blue',
+  'Wording': 'forestgreen'
+}
+export const CardViewType = styled.div`
+  background-color: ${props => (cardColorMap[props?.type] || 'red')};
+  border: 1px solid #000;
+  color: white;
+  //position: relative;
+  padding: 0 0.6rem 0 0.6rem;
+`;
+
 export const CardView = styled.div`
   position: relative;
   min-height: 216px;

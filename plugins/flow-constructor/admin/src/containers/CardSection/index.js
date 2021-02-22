@@ -43,6 +43,7 @@ export default function CardSection({ data, updateSection }) {
                 excerpt="Subsection description"
                 edit={() => handleEditToggle(card)}
                 cardId={card._id}
+                card={card}
               />
             </div>
           ))}
