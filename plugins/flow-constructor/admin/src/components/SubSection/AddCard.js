@@ -6,7 +6,7 @@ import {
   ModalBody,
   ModalHeader,
 } from "strapi-helper-plugin";
-import { Button, Flex, InputText, Label, Option } from "@buffetjs/core";
+import { Button, Flex, InputText, Label, Option, Select } from "@buffetjs/core";
 
 export default function AddCard({
   isOpen,
@@ -21,10 +21,13 @@ export default function AddCard({
   const [tag, setTag] = useState("");
   const [val, setValue] = useState({
     title: "",
+    type: "",
     tags: [],
     cards: [],
     use_cases: [],
   });
+  const [type, setType] = useState("Topic");
+  const cardTypes = ["Topic", "Subtopic", "Section", "Paragraph", "Wording"];
 
   useEffect(() => {
     setValue({
@@ -34,6 +37,10 @@ export default function AddCard({
       tags,
     });
   }, [sectionId, tags, parentCardId]);
+
+  useEffect(() => {
+    setValue({ ...val, type });
+  }, [type]);
 
   const addTags = () => {
     if (tag === "") {
@@ -84,6 +91,17 @@ export default function AddCard({
               }}
               type="text"
               value={val.title}
+            />
+          </div>
+          <div className="col-md-6 mb-5">
+            <Label htmlFor="type">Type</Label>
+            <Select
+              name="type"
+              onChange={({ target: { value } }) => {
+                setType(value);
+              }}
+              options={cardTypes}
+              value={type}
             />
           </div>
           <div className="col-md-12">
