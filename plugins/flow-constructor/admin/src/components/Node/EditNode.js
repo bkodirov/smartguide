@@ -14,10 +14,12 @@ import {
   faLink,
   faUnlink,
   faLongArrowAltRight,
+  faPlus,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import pluginId from "../../pluginId";
 import { LinkingNode } from "./index";
+import ArticleLinker from "./ArticleLinker";
 
 export default function EditNode({
   updateSection,
@@ -32,6 +34,7 @@ export default function EditNode({
   const [internalState, setInternalState] = useState({
     useCase,
     linkingAnswer: undefined,
+    articleLinker: false,
   });
   const [val, setValue] = useState(node);
 
@@ -102,27 +105,23 @@ export default function EditNode({
     });
   };
 
-  const addLink = () => {
-    if (link === "") {
-      return;
-    }
+  const addArticle = (article) => {
     setValue({
       ...val,
       conclusion: {
         ...val.conclusion,
-        links: [...val.conclusion.links, { text: link, link }],
+        articles: [...val.conclusion.articles, article],
       },
     });
-    setLink("");
   };
 
-  const deleteLink = (text) => {
-    const filteredLinks = val.conclusion.links.filter(
-      (link) => link.link !== text
+  const deleteArticle = (id) => {
+    const filteredArticles = val.conclusion.articles.filter(
+      (article) => article._id !== id
     );
     setValue({
       ...val,
-      conclusion: { ...val.conclusion, links: filteredLinks },
+      conclusion: { ...val.conclusion, articles: filteredArticles },
     });
   };
 
@@ -215,42 +214,43 @@ export default function EditNode({
                 />
               </div>
               <div className="col-md-6 mb-3">
-                <Label htmlFor="link">Links</Label>
-                <InputText
-                  name="link"
-                  onChange={({ target: { value } }) => {
-                    setLink(value);
-                  }}
-                  placeholder="Add new link"
-                  type="text"
-                  value={link}
-                  onKeyPress={(event) => {
-                    if (event.key === "Enter") {
-                      addLink();
+                <Flex alignItems="center">
+                  <Label htmlFor="article">Articles</Label>
+                  <InputText
+                    name="article"
+                    placeholder="Add new article"
+                    type="hidden"
+                  />
+                  <Button
+                    color="secondary"
+                    icon={<FontAwesomeIcon icon={faPlus} />}
+                    label=""
+                    onClick={() =>
+                      setInternalState({
+                        ...internalState,
+                        articleLinker: true,
+                      })
                     }
-                  }}
-                />
+                  />
+                </Flex>
               </div>
               <div className="col-md-12 mb-5">
-                {val.conclusion.links?.map((item, index) => (
-                  <Answer key={index}>
-                    <div className="answer_block">
-                      <Link
-                        to={`/plugins/${pluginId}/use_case/${useCase._id}`}
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          handleAnswer(item);
-                        }}
-                      >
-                        {item.text}
-                      </Link>
-                      <FontAwesomeIcon
-                        icon={faTrashAlt}
-                        onClick={() => deleteLink(item.text)}
-                      />
-                    </div>
-                  </Answer>
-                ))}
+                {val.conclusion.articles?.length > 0 &&
+                  val.conclusion.articles.map((item, index) => (
+                    <Answer key={index}>
+                      <div className="answer_block">
+                        <Link
+                          to={`/plugins/${pluginId}/use_case/${val.use_case_id}`}
+                        >
+                          {item.text}
+                        </Link>
+                        <FontAwesomeIcon
+                          icon={faTrashAlt}
+                          onClick={() => deleteArticle(item._id)}
+                        />
+                      </div>
+                    </Answer>
+                  ))}
               </div>
               <div className="col-md-12">
                 <Label htmlFor="tag">Tags</Label>
@@ -440,6 +440,14 @@ export default function EditNode({
             setInternalState({ ...internalState, linkingAnswer: undefined });
           }}
           onNewNode={() => console.log("onNewNode")}
+        />
+      )}
+      {internalState.articleLinker && (
+        <ArticleLinker
+          onSave={addArticle}
+          onClose={() =>
+            setInternalState({ ...internalState, articleLinker: false })
+          }
         />
       )}
     </>

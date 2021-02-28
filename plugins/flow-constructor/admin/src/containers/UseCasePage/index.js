@@ -60,9 +60,7 @@ function UseCasePage() {
           {addingNode && (
             <AddNode
               updateSection={() => getUseCaseDetail()}
-              useCaseId={useCase._id}
-              nodes={useCase.nodes}
-              tags={useCase.tags}
+              useCase={useCase}
               handleClose={() => updateAddingNode(false)}
             />
           )}

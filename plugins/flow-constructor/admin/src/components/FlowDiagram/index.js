@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import * as go from "gojs";
 import { ReactDiagram } from "gojs-react";
 import "./style.css";
-import {EditNode, AnswerLinker} from "../Node";
+import {EditNode} from "../Node";
 import {prepareNodes} from "../Node/utils";
 
 function handleModelChange(changes) {
@@ -99,7 +99,6 @@ export default function FlowDiagram({ data: useCase, updateSection }) {
           handleClose={() => updateEditingNode()}
         />
       }
-      <AnswerLinker/>
     </div>
   );
 }
